@@ -11,7 +11,7 @@
     curl -X POST -H 'Content-type:application/json' 'http://localhost:8983/solr/wfo/update?commit=true' --data-binary @plant_list_2022-12.json  --user wfo:****
 
     // this version doesn't run out of memory
-    curl -H 'Content-type:application/json' 'http://localhost:8983/solr/wfo/update?commit=true' -X POST -T plant_list_2024-12.json --user wfo:****
+    curl -H 'Content-type:application/json' 'http://localhost:8983/solr/wfo/update?commit=true' -X POST -T plant_list_2025-06.json --user wfo:****
 
     clear down solr
     curl -X POST -H 'Content-Type: application/json' 'http://localhost:8983/solr/wfo/update' --data-binary '{"delete":{"query":"classification_id_s:9999-04"} }' --user wfo:****
