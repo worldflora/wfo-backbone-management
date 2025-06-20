@@ -41,3 +41,4 @@ data/unpreferred_ipni_ids.csv
 data/.DS_Store
 .DS_Store
 data/.DS_Store
+scripts/nohup_coldp.out

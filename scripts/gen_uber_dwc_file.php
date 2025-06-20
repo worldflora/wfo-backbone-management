@@ -300,6 +300,8 @@ function process_row($row, $out, $fields ,$out_references, $fields_references){
     }
 
     $dwc["namePublishedIn"] = $name->getCitationMicro();
+
+    // FIXME: these will throw deprecation error on null comments
     $dwc["taxonRemarks"] = str_replace("\n", " ", substr($name->getComment(), 0, 254)); // a hack to assure compatibility
     $dwc["comments"] = str_replace("\n", " ", substr($name->getComment(), 0, 254)); // a hack to assure compatibility
 
