@@ -31,11 +31,11 @@ if(@$_GET['tdwg_geo'] && preg_match('/^[0-9A-Z]+$/', $_GET['tdwg_geo'])){
     foreach ($fields as $field) $header[] = $field->table . '_' . $field->name;
 
     $f = fopen('php://memory', 'r+');
-    fputcsv($f, $header);
+    fputcsv($f, $header, escape: "\\");
     while($row = $response->fetch_row()){
         $wfo = $row[0];
         if(!preg_match('/^wfo-[0-9]{10}$/', $wfo)) continue;
-        fputcsv($f, $row);
+        fputcsv($f, $row, escape: "\\");
     }
     rewind($f);
     echo stream_get_contents($f);
@@ -63,11 +63,11 @@ if(@$_GET['life_form']){
     foreach ($fields as $field) $header[] = $field->table . '_' . $field->name;
  
     $f = fopen('php://memory', 'r+');
-    fputcsv($f, $header);
+    fputcsv($f, $header, escape: "\\");
     while($row = $response->fetch_row()){
         $wfo = $row[0];
         if(!preg_match('/^wfo-[0-9]{10}$/', $wfo)) continue;
-        fputcsv($f, $row);
+        fputcsv($f, $row, escape: "\\");
     }
     rewind($f);
     echo stream_get_contents($f);

@@ -27,13 +27,13 @@ while($line = fgetcsv($in)){
     $wfo = $line['0'];
     if(!preg_match('/^wfo-[0-9]{10}$/', $wfo)){
         array_unshift($line, 'no match');
-        fputcsv($out, $line);
+        fputcsv($out, $line, escape: "\\");
         continue;
     }
     $barcode = trim($line['3']);
     if(!preg_match('/^E[0-9]{8}$/', $barcode)){
         array_unshift($line, 'no barcode');
-        fputcsv($out, $line);
+        fputcsv($out, $line, escape: "\\");
         continue;
     } 
 
@@ -52,7 +52,7 @@ while($line = fgetcsv($in)){
     // Check the response code
     if($responseCode != 200){
         array_unshift($line, 'no image');
-        fputcsv($out, $line);
+        fputcsv($out, $line, escape: "\\");
         $thumb = null;
     }else{
         // add a message to the line 

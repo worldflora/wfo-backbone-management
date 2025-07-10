@@ -15,11 +15,11 @@ $header = array();
 foreach($fields as $field){
     $header[] = $field->name;
 }
-fputcsv($out, $header);
+fputcsv($out, $header, escape: "\\");
 
 // write all the rows
 while($row = $response->fetch_assoc()){
-    fputcsv($out, $row);
+    fputcsv($out, $row, escape: "\\");
 }
 
 fclose($out);

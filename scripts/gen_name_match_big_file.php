@@ -59,7 +59,7 @@ if(file_exists($out_path)) unlink($out_path);
 $out = fopen($out_path, 'w');
 
 // write the headers
-fputcsv($out, $header);
+fputcsv($out, $header, escape: "\\");
 
 // get the rows
 $sql = "SELECT 
@@ -252,7 +252,7 @@ while($row = $response->fetch_assoc()){
 
     }
 
-    fputcsv($out, $line);
+    fputcsv($out, $line, escape: "\\");
 
     $row_count++;
 

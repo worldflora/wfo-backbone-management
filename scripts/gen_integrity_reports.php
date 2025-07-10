@@ -47,6 +47,7 @@ if(count($argv) > 1){
     check_author_string_contains_in($downloads_dir);
     check_author_string_characters($downloads_dir);
     check_name_string_characters($downloads_dir);
+    check_mixed_rank_children($downloads_dir);
 }
 
 
@@ -403,6 +404,46 @@ function check_name_string_characters($downloads_dir){
 
 }
 
+function check_mixed_rank_children($downloads_dir){
+
+    $sql = "with  child_ranks as
+            (
+            SELECT 
+                p.id, n.`rank`
+            FROM
+                `taxa` as p
+            JOIN `taxa` as c on c.parent_id = p.id
+            JOIN `taxon_names` as tn on c.taxon_name_id = tn.id
+            JOIN `names` as n on tn.name_id = n.id
+            group by p.id, n.`rank`),
+
+            messy_taxa as (
+            SELECT id as taxon_id, count(*) as rank_count 
+            FROM child_ranks
+            group by id
+            having rank_count > 1
+            order by rank_count desc)
+
+            select  n.id as name_id,
+                    i.`value`,
+                    n.name_alpha,
+                    mt.rank_count
+            from messy_taxa as mt
+            JOIN taxa as t on mt.taxon_id = t.id
+            JOIN taxon_names as tn on t.taxon_name_id = tn.id
+            JOIN `names` as n on n.id = tn.name_id
+            JOIN `identifiers` as i on n.prescribed_id = i.id and i.kind = 'wfo'";
+
+    run_sql_check(
+        "check_mixed_rank_children", // $name,
+        "Taxa that have child taxa that are of mixed ranks. e.g. a genus with species and subgenera as direct children.", //$title,
+        "No taxa were found with mixed rank children.", // $success,
+        "Taxa were found with mixed rank children.", // $failure,
+        $sql,
+        $downloads_dir);
+
+}
+
 /*
     Run a check that expects an empty result set on success.
     It looks for a 'name_id' field in the results and if there is 
@@ -435,7 +476,7 @@ function run_sql_check($name, $title, $success, $failure, $sql, $downloads_dir){
     // we write the csv even if it only has the header in it
     $out_file_path = $downloads_dir . $name . '.csv';
     $out = fopen($out_file_path, 'w');
-    fputcsv($out, $header);
+    fputcsv($out, $header, escape: "\\");
     foreach ($rows as $row){
 
         if($first_is_name_id){
@@ -445,7 +486,7 @@ function run_sql_check($name, $title, $success, $failure, $sql, $downloads_dir){
             array_unshift($row, $higher_taxa['phylum']);
         }
 
-        fputcsv($out, $row);
+        fputcsv($out, $row, escape: "\\");
     } 
     fclose($out);
 

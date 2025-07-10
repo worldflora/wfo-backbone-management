@@ -19,6 +19,7 @@ require_once('../include/Rank.php');
 require_once('../include/UpdateResponse.php');
 require_once('../include/NamePlacer.php');
 require_once('../include/SynonymMover.php');
+require_once('../include/ChildMover.php');
 require_once('../include/UnplacedFinder.php');
 require_once('../include/BasionymFinder.php');
 require_once('../include/Identifier.php');
@@ -185,8 +186,7 @@ $schema = new Schema([
                 'resolve' => function($rootValue, $args, $context, $info) {
                     return new NamePlacer($args['id'], $args['action'], $args['filter']);
                 }
-            ],
-            
+            ],         
             'getSynonymMover' => [
                 'type' => TypeRegister::synonymMoverType(),
                 'args' => [
@@ -203,6 +203,34 @@ $schema = new Schema([
                 ],
                 'resolve' => function($rootValue, $args, $context, $info) {
                     return new SynonymMover($args['id'], $args['filter']);
+                }
+            ],
+            'getChildMover' => [
+                'type' => TypeRegister::childMoverType(),
+                'args' => [
+                    'id' => [
+                        'type' => Type::string(),
+                        'description' => "The WFO ID or database ID of the taxon with children to move.",
+                        'required' => true
+                    ],
+                    'filter' => [
+                        'type' => Type::string(),
+                        'description' => "Characters to use as a filter on the suggested placements",
+                        'defaultValue' => ''
+                    ],
+                    'rank' => [
+                        'type' => Type::string(),
+                        'description' => "The rank of the children to be moved.",
+                        'defaultValue' => null
+                    ],
+                    'limit' => [
+                        'type' => Type::int(),
+                        'description' => "The maximum number of potential parent taxa to return.",
+                        'defaultValue' => 0
+                    ]
+                ],
+                'resolve' => function($rootValue, $args, $context, $info) {
+                    return new ChildMover($args['id'], $args['filter'], $args['rank'], $args['limit'] );
                 }
             ],
             'getUnplacedNames' => [
@@ -602,6 +630,36 @@ $schema = new Schema([
                 'resolve' => function($rootValue, $args, $context, $info) {
                     $mover = new SynonymMover($args['sourceWfo']); // load the mover with the source
                     return $mover->moveAllSynonymsTo($args['destinationWfo']);
+                }
+            ], // moveSynonyms
+
+            'moveChildren' => [
+                'type' => TypeRegister::updateResponseType(),
+                'description' => "Move the children of a particular rank to another parent taxon. This will fail if it creates name conflicts or the user doesn't have permission to edit both parent taxa.",
+                'args' => [
+                    'oldParentWfo' => [
+                        'type' => Type::string(),
+                        'description' => "The WFO ID of the name of the taxon that is the current parent.",
+                        'required' => true
+                    ],
+                    'childrensRank' => [
+                        'type' => Type::string(),
+                        'description' => "The rank of the children that are to be moved.",
+                        'required' => true
+                    ],
+                    'newParentWfo' => [
+                        'type' => Type::string(),
+                        'description' => "The WFO ID of the name of the taxon that will be the new parent.",
+                        'required' => true
+                    ]
+                ],
+                'resolve' => function($rootValue, $args, $context, $info) {
+                    $mover = new ChildMover(
+                        $args['oldParentWfo'], // the id
+                        null, // no filter value
+                        $args['childrensRank']
+                    );
+                    return $mover->moveChildrenTo($args['newParentWfo']);
                 }
             ], // moveSynonyms
 

@@ -29,7 +29,7 @@ if(file_exists($out_path)) unlink($out_path);
 $out = fopen($out_path, 'w');
 
 // write the headers
-fputcsv($out, $header);
+fputcsv($out, $header, escape: "\\");
 
 // get the rows
 $sql = "SELECT 
@@ -64,7 +64,7 @@ if($mysqli->error){
 // work through the dataset and write it to the csv file
 $row_count = 1;
 while($row = $response->fetch_assoc()){
-    fputcsv($out, $row);
+    fputcsv($out, $row, escape: "\\");
     $row_count++;
 }
 

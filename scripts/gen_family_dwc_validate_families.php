@@ -71,10 +71,10 @@ echo "\nSaving family map.\n";
 $out = fopen('../www/downloads/dwc/_emonocot_family_placement_current.csv', 'w');
 
 // pop in a header
-fputcsv($out, array('wfo', 'family'));
+fputcsv($out, array('wfo', 'family'), escape: "\\");
 
 foreach($families as $wfo => $family){
-    fputcsv($out, array($wfo, $family));
+    fputcsv($out, array($wfo, $family), escape: "\\");
 }
 
 fclose($out);
@@ -90,14 +90,14 @@ if(file_exists($prev_path)){
     $in = fopen($prev_path, 'r');
     $header = fgetcsv($in);
 
-    fputcsv($out, array('wfo', 'family_previous', 'family_current'));
+    fputcsv($out, array('wfo', 'family_previous', 'family_current'), escape: "\\");
 
     $counter = 0;
     while($line = fgetcsv($in)){
         if(!isset($families[$line[0]]) || $families[$line[0]] != $line[1]){
             $family_previous = $line[1];
             $family_current = isset($families[$line[0]]) ? $families[$line[0]] : "DEDUPLICATED";
-            fputcsv($out, array($line[0], $family_previous, $family_current) );
+            fputcsv($out, array($line[0], $family_previous, $family_current), escape: "\\" );
             $counter++;
             echo "$counter\t{$line[0]}\t{$family_previous}\t{$family_current}\n";
         }

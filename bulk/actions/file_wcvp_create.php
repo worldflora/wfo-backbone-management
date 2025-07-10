@@ -26,7 +26,7 @@ foreach($fields as $field){
 // add a rhakhis wfo id
 $header[] = 'rhakhis_wfo';
 
-fputcsv($out, $header);
+fputcsv($out, $header, escape: "\\");
 
 // add a row at the top that is the family
 $family_row = array_fill_keys($header, null);
@@ -43,7 +43,7 @@ if(isset($matches->names) && count($matches->names) ==1){
     $family_row['taxon_authors'] = $matches->names[0]->getAuthorsString();
 }
 
-fputcsv($out, $family_row);
+fputcsv($out, $family_row, escape: "\\");
 
 // write all the rows
 while($row = $response->fetch_assoc()){
@@ -79,7 +79,7 @@ while($row = $response->fetch_assoc()){
         $out_row['parent_plant_name_id'] = 9999999;
     }
 
-    fputcsv($out, $out_row);
+    fputcsv($out, $out_row, escape: "\\");
 }
 
 fclose($out);

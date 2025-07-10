@@ -59,7 +59,7 @@ $names_fields = array(
     "publishedInYear",
     "link"
 );
-fputcsv($names_out, $names_fields, "\t");
+fputcsv($names_out, $names_fields, "\t", escape: "\\");
 
 // refs - set up csv file
 $refs_file_path = $downloads_dir . "reference.tsv";
@@ -71,7 +71,7 @@ $refs_fields = array(
     "doi",
     "remarks"
 );
-fputcsv($refs_out, $refs_fields, "\t");
+fputcsv($refs_out, $refs_fields, "\t", escape: "\\");
 
 // taxa - set up csv file
 $taxa_file_path = $downloads_dir . "taxon.tsv";
@@ -87,7 +87,7 @@ $taxon_fields = array(
     "referenceID",
     "link"
 );
-fputcsv($taxa_out, $taxon_fields, "\t");
+fputcsv($taxa_out, $taxon_fields, "\t", escape: "\\");
 
 // synonyms - set up csv file
 $synonyms_file_path = $downloads_dir . "synonym.tsv";
@@ -100,7 +100,7 @@ $synonym_fields = array(
     "referenceID",
     "link"
 );
-fputcsv($synonyms_out, $synonym_fields, "\t");
+fputcsv($synonyms_out, $synonym_fields, "\t", escape: "\\");
 
 // type material
 $types_file_path = $downloads_dir . "typematerial.tsv";
@@ -111,7 +111,7 @@ $types_fields = array(
     "citation",
     "link"
 );
-fputcsv($types_out, $types_fields, "\t");
+fputcsv($types_out, $types_fields, "\t", escape: "\\");
 
 $counter = 0;
 $offset = 1; // offset is one because the first one is the root
@@ -482,7 +482,7 @@ while(true){
             }
         }
         $csv_row = str_replace("\t", " ", $csv_row); // safety first
-        fputcsv($names_out, $csv_row, "\t");
+        fputcsv($names_out, $csv_row, "\t", escape: "\\");
 
         // protologue row out if we have created one
         if($protologue_row){
@@ -495,7 +495,7 @@ while(true){
                 }
             }
             $csv_row = str_replace("\t", " ", $csv_row); // safety first
-            fputcsv($refs_out, $csv_row, "\t");
+            fputcsv($refs_out, $csv_row, "\t", escape: "\\");
         }
 
         // taxon out
@@ -509,7 +509,7 @@ while(true){
                 }
             }
             $csv_row = str_replace("\t", " ", $csv_row); // safety first
-            fputcsv($taxa_out, $csv_row, "\t");
+            fputcsv($taxa_out, $csv_row, "\t", escape: "\\");
         }
 
         // synonym out
@@ -523,7 +523,7 @@ while(true){
                 }
             }
             $csv_row = str_replace("\t", " ", $csv_row); // safety first
-            fputcsv($synonyms_out, $csv_row, "\t");
+            fputcsv($synonyms_out, $csv_row, "\t", escape: "\\");
         }
 
         $counter++;
@@ -560,7 +560,7 @@ while($row = $response->fetch_assoc()){
         }
     }
     $csv_row = str_replace("\t", " ", $csv_row); // safety first
-    fputcsv($refs_out, $csv_row, "\t");
+    fputcsv($refs_out, $csv_row, "\t", escape: "\\");
 
 }
 
@@ -589,7 +589,7 @@ while($row = $response->fetch_assoc()){
         }
     }
     $csv_row = str_replace("\t", " ", $csv_row); // safety first
-    fputcsv($refs_out, $csv_row, "\t");
+    fputcsv($refs_out, $csv_row, "\t", escape: "\\");
 
 }
 $response->close();
@@ -668,7 +668,7 @@ function write_out_type_row($types_out, $cohort, $types_fields){
         }
     }
     $csv_row = str_replace("\t", " ", $csv_row); // safety first
-    fputcsv($types_out, $csv_row, "\t");
+    fputcsv($types_out, $csv_row, "\t", escape: "\\");
 
 }
 

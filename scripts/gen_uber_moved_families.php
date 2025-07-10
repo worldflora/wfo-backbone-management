@@ -81,7 +81,7 @@
 
     $out = fopen($data_dir . 'moved_names.csv', 'w');
     array_unshift($header, 'old_family');
-    fputcsv($out, $header);
+    fputcsv($out, $header, escape: "\\");
 
     $counter = 0;
     $moved_count = 0;
@@ -92,7 +92,7 @@
 
         if(isset($prev_lookup[$wfo]) && $prev_lookup[$wfo] != $new_family){
             array_unshift($line,$prev_lookup[$wfo]);
-            fputcsv($out, $line);
+            fputcsv($out, $line, escape: "\\");
             $moved_count++;
         }
         $counter++;

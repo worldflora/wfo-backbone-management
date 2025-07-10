@@ -27,7 +27,7 @@ if(file_exists($out_path)) unlink($out_path);
 $out = fopen($out_path, 'w');
 
 // write the headers
-fputcsv($out, $header);
+fputcsv($out, $header, escape: "\\");
 
 // get the rows
 $sql = "SELECT distinct ipni.`value` as ipni_id, wfo.`value` as wfo_id
@@ -57,7 +57,7 @@ while($row = $response->fetch_assoc()){
     if($row['ipni_id'] == $last_ipni) continue; // no doubles
     if(!preg_match('/^urn\:lsid\:ipni\.org\:names\:[0-9]+-[0-9]+$/', $row['ipni_id'])) continue; //no blanks
     $last_ipni = $row['ipni_id'];
-    fputcsv($out, $row);
+    fputcsv($out, $row, escape: "\\");
     $row_count++;
 }
 

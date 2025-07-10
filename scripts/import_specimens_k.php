@@ -31,7 +31,7 @@ if($offset == 0) fputcsv($not_found_out, $header); // same as we got
 $found_out = fopen('../data/sources/TypesForRBGE_found.csv', $offset > 0 ? 'a' : 'w');
 if($offset == 0){
     array_unshift($header, 'wfo_id');
-    fputcsv($found_out, $header); // we'll prepend the wfo ID to the found file.
+    fputcsv($found_out, $header, escape: "\\"); // we'll prepend the wfo ID to the found file.
 }
 
 
@@ -75,7 +75,7 @@ while($line = fgetcsv($in)){
                 echo "\tGot name by IPNI ID.\n";
             }else{
                 echo "\tNo IPNI ID found - skipping.\n";
-                fputcsv($not_found_out,$line);
+                fputcsv($not_found_out,$line, escape: "\\");
                 continue; // next row from csv please
             }
 
@@ -91,7 +91,7 @@ while($line = fgetcsv($in)){
 
     // keep a record of our find
     array_unshift($line, $wfo_id);
-    fputcsv($found_out, $line);
+    fputcsv($found_out, $line, escape: "\\");
 
     // OK we are good to go and create the reference.
      // do we have a reference for this uri?

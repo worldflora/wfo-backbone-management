@@ -60,7 +60,7 @@ $fields = array(
     "comments",             // done
     "deprecated"            // done
 );
-fputcsv($out, $fields);
+fputcsv($out, $fields, escape: "\\");
 
 $out_references = fopen($out_file_path . '_references.csv', 'w');
 $fields_references = array(
@@ -72,7 +72,7 @@ $fields_references = array(
     "doNotProcess",
     "doNotProcess_reason"
 );
-fputcsv($out_references, $fields_references);
+fputcsv($out_references, $fields_references, escape: "\\");
 
 
 $counter = 0;
@@ -439,7 +439,7 @@ function process_row($row, $out, $fields ,$out_references, $fields_references){
             else $ref_out[] = "";
         }
 
-        fputcsv($out_references, $ref_out);
+        fputcsv($out_references, $ref_out, escape: "\\");
 
     }
 
@@ -451,7 +451,7 @@ function process_row($row, $out, $fields ,$out_references, $fields_references){
             $csv_row[] = null;
         }
     }
-    fputcsv($out, $csv_row);
+    fputcsv($out, $csv_row, escape: "\\");
 
     // do we have multiple WFO IDs?
     // If so add an extra doNotProcess row
@@ -476,7 +476,7 @@ function process_row($row, $out, $fields ,$out_references, $fields_references){
                 $csv_row[] = null;
             }
         }
-        fputcsv($out, $csv_row);
+        fputcsv($out, $csv_row, escape: "\\");
 
     }
 

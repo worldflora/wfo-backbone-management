@@ -64,10 +64,10 @@ if(@$_GET['root_taxon_wfo']){
     $out = fopen($file_name, 'w');
 
     // on first open we write the headers
-    fputcsv($out, $headers);
+    fputcsv($out, $headers, escape: "\\");
 
     // start it off
-    process_name($name, $out, $headers);
+    process_name($name, $out, $headers, escape: "\\");
 
 }else{
 
@@ -511,7 +511,7 @@ function process_name($name, $out, $headers){
         $csv_row[] = $out_row[$header];
     }
 
-    fputcsv($out, $csv_row);
+    fputcsv($out, $csv_row, escape: "\\");
 
 }
 

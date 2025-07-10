@@ -21,7 +21,7 @@ $out = fopen('../data/Bryophytes_NOIDS_Roger_OUT.csv', 'w');
 $header = fgetcsv($in);
 $header[0] = str_replace("\xEF\xBB\xBF",'', $header[0]);
 array_unshift($header, "\xEF\xBB\xBF" . 'wfo_id');
-fputcsv($out, $header);
+fputcsv($out, $header, escape: "\\");
 
 
 while($row = fgetcsv($in)){
@@ -38,7 +38,7 @@ while($row = fgetcsv($in)){
     $name->save();
 
     array_unshift($row, $name->getPrescribedWfoId());
-    fputcsv($out, $row);
+    fputcsv($out, $row, escape: "\\");
     print_r($row);
 
 }

@@ -22,7 +22,7 @@ $response->close();
 
 $out = fopen('../data/unpreferred_ipni_ids.csv', 'w');
 
-fputcsv($out, array('wfo_id', 'name', 'ipni_id', 'suppressed', 'top_copy'));
+fputcsv($out, array('wfo_id', 'name', 'ipni_id', 'suppressed', 'top_copy'), escape: "\\");
 
 foreach($rows as $row){
 
@@ -65,7 +65,7 @@ foreach($rows as $row){
                 $dupe['ipni_id'],
                 $dupe['suppressed_b'] == 't' ? 'suppressed' : 'not suppressed',
                 $dupe['top_copy_b'] == 't' ? 'top copy' : 'bottom copy'
-            ));
+            ), escape: "\\");
         }
         
         echo "\t no match";

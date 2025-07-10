@@ -11,6 +11,7 @@ require_once('../include/UpdateResponseGqlType.php');
 require_once('../include/NamePlacerGqlType.php');
 require_once('../include/NamePlacer.php');
 require_once('../include/SynonymMoverGqlType.php');
+require_once('../include/ChildMoverGqlType.php');
 require_once('../include/UnplacedFinderGqlType.php');
 require_once('../include/BasionymFinderGqlType.php');
 require_once('../include/IdentifierGqlType.php');
@@ -20,9 +21,6 @@ require_once('../include/StatsBasicSummaryGqlType.php');
 require_once('../include/ReferenceGqlType.php');
 require_once('../include/ReferenceUsageGqlType.php');
 require_once('../include/AuthorTeamMemberGqlType.php');
-
-
-
 
 /*
 
@@ -41,6 +39,7 @@ class TypeRegister {
     private static $updateResponseType;
     private static $namePlacerType;
     private static $synonymMoverType;
+    private static $childMoverType;
     private static $placementActionEnum;
     private static $unplacedFinderType;
     private static $basionymFinderType;
@@ -84,6 +83,10 @@ class TypeRegister {
         return self::$synonymMoverType ?: (self::$synonymMoverType = new SynonymMoverGqlType());
     }
     
+    public static function childMoverType(){
+        return self::$childMoverType ?: (self::$childMoverType = new ChildMoverGqlType());
+    }
+
     public static function unplacedFinderType(){
         return self::$unplacedFinderType ?: (self::$unplacedFinderType = new UnplacedFinderGqlType());
     }

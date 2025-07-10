@@ -34,12 +34,12 @@ function generate_stats_by_genus($include_historic, $downloads_dir){
     foreach ($finfo as $field) {
         $headers[] = $field->name;
     }
-    fputcsv($out, $headers);
+    fputcsv($out, $headers, escape: "\\");
 
     // every row
     $count = 0;
     while($row = $result->fetch_assoc()){
-        fputcsv($out, $row);
+        fputcsv($out, $row, escape: "\\");
         $count++;
     }
 
@@ -48,7 +48,7 @@ function generate_stats_by_genus($include_historic, $downloads_dir){
         $result->close();
         $result  = $mysqli->query("SELECT * FROM `stats_genera_log`;");
         while($row = $result->fetch_assoc()){
-            fputcsv($out, $row);
+            fputcsv($out, $row, escape: "\\");
             $count++;
         }
     }
@@ -116,12 +116,12 @@ $finfo = $result->fetch_fields();
 foreach ($finfo as $field) {
     $headers[] = $field->name;
 }
-fputcsv($out, $headers);
+fputcsv($out, $headers, escape: "\\");
 
 // every row
 $count = 0;
 while($row = $result->fetch_assoc()){
-    fputcsv($out, $row);
+    fputcsv($out, $row, escape: "\\");
     $count++;
 }
 $count = number_format($count, 0);

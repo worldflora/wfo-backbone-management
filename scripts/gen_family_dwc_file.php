@@ -198,7 +198,7 @@ function process_family($family_wfo, $file_path){
             "tplID"
         );
 
-        fputcsv($out, $fields);
+        fputcsv($out, $fields, escape: "\\");
 
         $fields_references = array(
             "taxonID",
@@ -210,7 +210,7 @@ function process_family($family_wfo, $file_path){
             "doNotProcess_reason"
         );
 
-        fputcsv($out_references, $fields_references);
+        fputcsv($out_references, $fields_references, escape: "\\");
 
         foreach ($link_index as $wfo => $item) {
 
@@ -448,7 +448,7 @@ function process_family($family_wfo, $file_path){
                     else $ref_out[] = "";
                 }
 
-                fputcsv($out_references, $ref_out);
+                fputcsv($out_references, $ref_out, escape: "\\");
 
             }
 
@@ -583,7 +583,7 @@ function process_family($family_wfo, $file_path){
                     $csv_row[] = null;
                 }
             }
-            fputcsv($out, $csv_row);
+            fputcsv($out, $csv_row, escape: "\\");
 
         }
 

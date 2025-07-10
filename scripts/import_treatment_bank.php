@@ -79,7 +79,7 @@ while($day > $stop){
         $matches = $matcher->stringMatch($name_string);
         if(count($matches->names) != 1){
             echo "-\t" . count($matches->names) . " names found.\n";
-            fputcsv($out, array($day_string, $treatment->TaxName, count($matches->names), $treatment->LnkHttpUri, $treatment->PubLnkArticleDoi));
+            fputcsv($out, array($day_string, $treatment->TaxName, count($matches->names), $treatment->LnkHttpUri, $treatment->PubLnkArticleDoi), escape: "\\");
             continue;
         }
 

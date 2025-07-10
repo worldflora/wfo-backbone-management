@@ -65,7 +65,7 @@ function extractDarwinCore($zip, $new_file_name){
         $header[(int)$field->attributes()['index']] = $info['filename'];
 //        print_r($field->attributes());
     }
-    fputcsv($out, $header, ",", '"');
+    fputcsv($out, $header, ",", '"', escape: "\\");
 
 
     // dump it out
@@ -95,7 +95,7 @@ function extractDarwinCore($zip, $new_file_name){
             $out_line[] = $val;
         }
 
-        fputcsv($out, $out_line, ",", '"');
+        fputcsv($out, $out_line, ",", '"', escape: "\\");
     }
     fclose($out);
 

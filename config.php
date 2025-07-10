@@ -6,7 +6,7 @@ include_once("../../backbone_secrets.php");
 
 // backbone_secrets contains $db_hidden_dir as well.
 
-session_name($session_name); // set in secrets to differentiate sandbox from live site.
+if($session_name) session_name($session_name); // set in secrets to differentiate sandbox from live site.
 session_start();
 
 // create and initialise the database connection

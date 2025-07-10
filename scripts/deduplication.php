@@ -71,7 +71,7 @@ $header = array(
     'merge_with'
 );
 
-fputcsv($out, $header);
+fputcsv($out, $header, escape: "\\");
 
 // work through the rows in the dupes table and build sets to process
 $response = $mysqli->query("SELECT concat_ws('*',`name_alpha`, `rank`, `authors`) as comparator, duplicates.* FROM duplicates ORDER BY `name_alpha`, `rank`, `authors`, `wfo`");
@@ -111,12 +111,12 @@ function put_set($out, $set, $comparator){
         $good_name = $not_deprecated[0];
         $good_name['remove'] = false;
         $good_name['merge_with'] = null;
-        fputcsv($out, $good_name);
+        fputcsv($out, $good_name, escape: "\\");
         foreach($deprecated as $bad_name){
             $bad_name['remove'] = "true";
             $bad_name['merge_with'] = $good_name['wfo'];
             $bad_name['deleted'] = delete($bad_name['wfo'], $good_name['wfo']);
-            fputcsv($out, $bad_name);
+            fputcsv($out, $bad_name, escape: "\\");
         }
     }elseif(count($not_deprecated) == 0){
 
@@ -125,14 +125,14 @@ function put_set($out, $set, $comparator){
         $saved_name = $deprecated[0];
         $saved_name['remove'] = "false";
         $saved_name['merge_with'] = null;
-        fputcsv($out, $saved_name);
+        fputcsv($out, $saved_name, escape: "\\");
         // subsequent ones are merged with it
         for ($i=1; $i < count($deprecated) ; $i++) { 
             $damned_name = $deprecated[$i];
             $damned_name['remove'] = "true";
             $damned_name['merge_with'] = $saved_name['wfo'];
             $damned_name['deleted'] = delete($damned_name['wfo'], $saved_name['wfo']);
-            fputcsv($out, $damned_name);
+            fputcsv($out, $damned_name, escape: "\\");
         }
 
     }else{
@@ -140,18 +140,18 @@ function put_set($out, $set, $comparator){
         foreach($deprecated as $bad_name){
             $bad_name['remove'] = "false";
             $bad_name['merge_with'] = 'AMBIGUOUS';
-            fputcsv($out, $bad_name);
+            fputcsv($out, $bad_name, escape: "\\");
         }
 
         foreach($not_deprecated as $bad_name){
             $bad_name['remove'] = "false";
             $bad_name['merge_with'] = 'AMBIGUOUS';
-            fputcsv($out, $bad_name);
+            fputcsv($out, $bad_name, escape: "\\");
         }
     }
 
     // blank line to separate the sets
-    fputcsv($out, array());
+    fputcsv($out, array(), escape: "\\");
 
 }
 

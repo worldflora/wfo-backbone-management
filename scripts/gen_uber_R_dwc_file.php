@@ -60,7 +60,7 @@ for ($i=0; $i < count($header); $i++) {
     if(in_array($i, $drop_field_indexes)) continue;
     $new_header[] = $header[$i];
 }
-fputcsv($out, $new_header, "\t");
+fputcsv($out, $new_header, "\t", escape: "\\");
 
 while($row = fgetcsv($fp)){
 
@@ -74,7 +74,7 @@ while($row = fgetcsv($fp)){
     }
 
     $new_row = str_replace("\t", " ", $new_row); // safety first
-    fputcsv($out, $new_row, "\t");
+    fputcsv($out, $new_row, "\t", escape: "\\");
 
 }
 

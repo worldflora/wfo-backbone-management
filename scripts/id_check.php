@@ -33,7 +33,7 @@ foreach($rows as $row){
     if($result->num_rows){
         while($issue = $result->fetch_assoc()){
             print_r($issue);
-            fputcsv($out, $issue);
+            fputcsv($out, $issue, escape: "\\");
         }
     }else{
         echo "$parent_id\n";
