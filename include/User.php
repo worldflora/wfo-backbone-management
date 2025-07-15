@@ -429,6 +429,7 @@ class User{
                 JOIN `taxon_names` as tn on t.taxon_name_id = tn.id
                 JOIN `names` as n on tn.name_id = n.id
                 WHERE ut.`user_id` = {$this->getId()}
+                GROUP BY ut.taxon_id, n.name_alpha
                 order by name_alpha;");
 
         while($row = $result->fetch_assoc()){

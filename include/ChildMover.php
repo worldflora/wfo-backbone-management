@@ -127,7 +127,7 @@ class ChildMover{
 
     }
 
-    public function moveChildrenTo($new_parent_id){
+    public function moveChildrenTo($new_parent_id, $child_wfos){
 
         // firstly check we have a source taxon
         if(!$this->taxon){
@@ -143,9 +143,10 @@ class ChildMover{
         $children_all = $this->taxon->getChildren();
 
         // chop them down to just the ones at the rank we are interested in
+        // and with the WFO IDs in the list provided
         $children = array();
         foreach($children_all as $kid){
-            if($kid->getRank() == $this->rank) $children[] = $kid;
+            if($kid->getRank() == $this->rank && in_array($kid->getAcceptedName()->getPrescribedWfoId(), $child_wfos)) $children[] = $kid;
         }
 
         // no children then nothing to do
@@ -185,7 +186,6 @@ class ChildMover{
                 $kid->setParent($destination_taxon);
                 $kid->save();
             }
-            
             
             $n = count($children);
             $r = new UpdateResponse('MoveChildren', true, "Moved $n children from {$this->name->getPrescribedWfoId()} to {$destination_taxon->getAcceptedName()->getPrescribedWfoId()}.");

@@ -651,6 +651,11 @@ $schema = new Schema([
                         'type' => Type::string(),
                         'description' => "The WFO ID of the name of the taxon that will be the new parent.",
                         'required' => true
+                    ],
+                    'childWfos' => [
+                        'type' => Type::listOf(Type::string()),
+                        'description' => "A list of the WFO IDs of the children to be moved.",
+                        'required' => true
                     ]
                 ],
                 'resolve' => function($rootValue, $args, $context, $info) {
@@ -659,7 +664,7 @@ $schema = new Schema([
                         null, // no filter value
                         $args['childrensRank']
                     );
-                    return $mover->moveChildrenTo($args['newParentWfo']);
+                    return $mover->moveChildrenTo($args['newParentWfo'], $args['childWfos']);
                 }
             ], // moveSynonyms
 
