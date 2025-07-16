@@ -722,7 +722,36 @@ $schema = new Schema([
                     }
                     return $response;
                 }
-            ], // updateComment
+            ], // updateHybrid
+
+            'updateFossilStatus' => [
+                'type' => TypeRegister::updateResponseType(),
+                'description' => "Update the fossil status of a taxon.",
+                'args' => [
+                    'id' => [
+                        'type' => Type::int(),
+                        'description' => "The database ID of the taxon record.",
+                        'required' => true
+                    ],
+                    'isFossil' => [
+                        'type' => Type::boolean(),
+                        'description' => "Whether this taxon is a fossil or not.",
+                        'required' => true
+                    ]
+                ],
+                'resolve' => function($rootValue, $args, $context, $info) {
+                    $response = new UpdateResponse('UpdatingFossilSatus', true, "Updating the fossil status.");
+                    $taxon = Taxon::getById($args['id']);
+                    if(!$taxon || !$taxon->getId()){
+                        $response->success = false;
+                        $response->message = "Couldn't find taxon for  ID '{$args['id']}'"; 
+                    }else{
+                        // we don't have much validity checking for taxa so can set directly.
+                        $taxon->updateFossilStatus($args['isFossil']);
+                    }
+                    return $response;
+                }
+            ], // updateFossil
 
             'createName' => [
                 'type' => TypeRegister::updateResponseType(),

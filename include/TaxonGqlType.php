@@ -66,6 +66,13 @@ class TaxonGqlType extends ObjectType
                             return $taxon->getHybridStatus();
                         }
                     ],
+                    'isFossil' => [
+                        'type' => Type::boolean(),
+                        'description' => "Whether this taxon is a fossil taxon or not.",
+                        'resolve' => function($taxon){
+                            return $taxon->getFossilStatus();
+                        }
+                    ],
                     'canEdit' => [
                         'type' => Type::boolean(),
                         'description' => "Whether the current user has permission to edit this taxon.",

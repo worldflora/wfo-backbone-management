@@ -16,6 +16,7 @@ class Taxon extends WfoDbObject{
     private ?Array $editors = null;
     
     private bool $isHybrid = false;
+    private bool $isFossil = false;
 
     protected static $loaded = array();
 
@@ -64,6 +65,7 @@ class Taxon extends WfoDbObject{
         }
 
         $this->isHybrid = $row['is_hybrid'] > 0 ? true : false;
+        $this->isFossil = $row['is_fossil'] > 0 ? true : false;
         $this->comment = $row['comment'];
         $this->issue = $row['issue'];
         $this->user_id = $row['user_id'];
@@ -176,6 +178,31 @@ class Taxon extends WfoDbObject{
         return $this->isHybrid;
     }
 
+    public function updateFossilStatus($is_fossil){
+        $this->setFossilStatus($is_fossil);
+        $this->save();
+
+        if($is_fossil){
+            $this->getAcceptedName()->updateChangeLog("Set as fossil");
+        }else{
+            $this->getAcceptedName()->updateChangeLog("Set as NOT fossil");
+        }
+        
+    }
+
+    /**
+     * Set if this is a fossil or not
+     * 
+     * @param boolean True if it is a fossil taxon
+     */
+    public function setFossilStatus($is_fossil){
+        $this->isFossil = $is_fossil;
+    }
+
+    public function getFossilStatus(){
+        return $this->isFossil;
+    }
+
     /**
      * 
      * This is a wrapper around the same
@@ -194,38 +221,61 @@ class Taxon extends WfoDbObject{
 
         $genus_is_hybrid = false;
         $species_is_hybrid = false;
+        $genus_is_fossil = false;
+        $species_is_fossil = false;
 
+        // look to the name parts needing flagging with symbols
         if($this->name->getGenusString()){
             $ancestor = $this;
             while($ancestor = $ancestor->getParent()){
 
                 if($ancestor->getRank() == 'species'){
                     $species_is_hybrid = $ancestor->getHybridStatus();
+                    $species_is_fossil = $ancestor->getFossilStatus();
                 }
 
                 if($ancestor->getRank() == 'genus'){
                     $genus_is_hybrid = $ancestor->getHybridStatus();
+                    $genus_is_fossil = $ancestor->getFossilStatus();
                     break;
                 }
 
             }
         }
 
+        /* ADDING THE HYBRID SYMBOL */
         $hybrid_symbol = '× ';
         if($italics) $hybrid_symbol = "</i>$hybrid_symbol<i>";
 
         if($this->isHybrid){
             $n = preg_quote($this->name->getNameString(), '/');
-            //$fns = str_replace($n, $hybrid_symbol . $n, $fns);
-            $fns = preg_replace("/$n/", $hybrid_symbol . $n, $fns, 1);
+
+            // if this is an autonym then add it to the last 
+            if(substr_count($fns, $this->name->getNameString()) > 1 ){
+
+                // replace the first one with a holder
+                $fns = preg_replace("/$n/", 'PLACE_HOLDER', $fns, 1);
+
+                // insert the symbol
+                $fns = preg_replace("/$n/", $hybrid_symbol . $n, $fns, 1);
+
+                // put the name back in 
+                $fns = preg_replace("/PLACE_HOLDER/", $n, $fns, 1);
+
+            }else{
+                $fns = preg_replace("/$n/", $hybrid_symbol . $n, $fns, 1);
+            }
+
         }
 
-        if($genus_is_hybrid){
+        if($genus_is_hybrid && !$abbreviate_genus){ 
+            // preg replace the first instance but beware if the genus is 
+            // abbreviated and the name is an autonym then it will add it to 
+            // the authonym
             $n = preg_quote($this->name->getGenusString(), '/');
             // $fns = str_replace($n, $hybrid_symbol . $n, $fns);
             $fns = preg_replace("/$n/", $hybrid_symbol . $n, $fns, 1);
         }
-
 
         if($species_is_hybrid){
 
@@ -237,6 +287,44 @@ class Taxon extends WfoDbObject{
             $fns = str_replace($this->name->getRank(), "notho" . $this->name->getRank(), $fns);
             $fns = str_replace($ranks_table[$this->name->getRank()]["abbreviation"], "notho" . $ranks_table[$this->name->getRank()]["abbreviation"], $fns);
 
+        }
+
+        /* ADDING THE FOSSIL SYMBOL */
+        $fossil_symbol = '† ';
+        if($this->isFossil){
+            $n = preg_quote($this->name->getNameString(), '/');
+
+            // if this is an autonym then add it to the last 
+            if(substr_count($fns, $this->name->getNameString()) > 1 ){
+
+                // replace the first one with a holder
+                $fns = preg_replace("/$n/", 'PLACE_HOLDER', $fns, 1);
+
+                // insert the symbol
+                $fns = preg_replace("/$n/", $fossil_symbol . $n, $fns, 1);
+
+                // put the name back in 
+                $fns = preg_replace("/PLACE_HOLDER/", $n, $fns, 1);
+
+            }else{
+                $fns = preg_replace("/$n/", $fossil_symbol . $n, $fns, 1);
+            }
+
+        }
+
+        if($genus_is_fossil && !$abbreviate_genus){ 
+            // preg replace the first instance but beware if the genus is 
+            // abbreviated and the name is an autonym then it will add it to 
+            // the authonym
+            $n = preg_quote($this->name->getGenusString(), '/');
+            // $fns = str_replace($n, $hybrid_symbol . $n, $fns);
+            $fns = preg_replace("/$n/", $fossil_symbol . $n, $fns, 1);
+        }
+
+        if($species_is_fossil){
+            $n = preg_quote($this->name->getSpeciesString(), '/');
+            // $fns = str_replace($n, $hybrid_symbol . $n, $fns);
+            $fns = preg_replace("/$n/", $fossil_symbol . $n, $fns, 1);
         }
 
         // a side effect of using preg_quote above is that 
@@ -606,6 +694,7 @@ class Taxon extends WfoDbObject{
                 `parent_id` = ?,
                 `user_id` = ?,
                 `is_hybrid` = ?,
+                `is_fossil` = ?,
                 `comment` = ?, 
                 `issue` = ?,
                 `source` = ? 
@@ -614,10 +703,11 @@ class Taxon extends WfoDbObject{
             );
             if($mysqli->error) echo $mysqli->error; // should only have prepare errors during dev
             $parent_id = $this->parent->getId();
-             $stmt->bind_param("iiisssi",
+             $stmt->bind_param("iiiisssi",
                 $parent_id,
                 $this->user_id,
                 $this->isHybrid,
+                $this->isFossil,
                 $this->comment,
                 $this->issue,
                 $this->source,
@@ -635,15 +725,16 @@ class Taxon extends WfoDbObject{
             // we don't have a db id so we are creating
 
              $stmt = $mysqli->prepare("INSERT 
-                INTO `taxa` (`parent_id`, `user_id`, `is_hybrid`, `comment`,`issue`,`source`) 
-                VALUES (?,?,?,?,?,?)");
+                INTO `taxa` (`parent_id`, `user_id`, `is_hybrid`,  `is_fossil`, `comment`,`issue`,`source`) 
+                VALUES (?,?,?,?,?,?,?)");
             if($mysqli->error) echo $mysqli->error; // should only have prepare errors during dev
             $parent_id = $this->parent->getId();
 
-            $stmt->bind_param("iiisss",
+            $stmt->bind_param("iiiisss",
                 $parent_id,
                 $this->user_id,
                 $this->isHybrid,
+                $this->isFossil,
                 $this->comment,
                 $this->issue,
                 $this->source
