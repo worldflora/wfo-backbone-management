@@ -416,6 +416,7 @@ $schema = new Schema([
                     return $team->getMembers();
                 }
             ]
+
         ]// fields
     ]), // query object type
 

@@ -136,6 +136,34 @@ class TaxonGqlType extends ObjectType
                             return $taxon->getReferences('literature');
                         }
                     ]
+
+/*
+                    'descriptionMarkDown' => [
+                        'type' => Type::string(),
+                        'description' => "A description of this taxon in Mark Down format",
+                        'resolve' => function($taxon){
+                            // The description is actually stored in the name object
+                            // this is so it persists if the name is unplaced and then
+                            // placed again as a new taxon.
+                            // FIXME
+                            return 'A description';
+                            //return $taxon->getReferences('literature');
+                        }
+                    ],
+                    'descriptionComplete' => [
+                        'type' => Type::int(),
+                        'description' => "A flag to indicate that the description is complete and can be published.",
+                        'resolve' => function($taxon){
+                            // The description is actually stored in the name object
+                            // this is so it persists if the name is unplaced and then
+                            // placed again as a new taxon.
+                            // FIXME
+                            return true;
+                            //return $taxon->getReferences('literature');
+                        }
+                    ]
+*/
+
                 ];
             }
         ];
