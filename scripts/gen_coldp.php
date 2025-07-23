@@ -85,6 +85,7 @@ $taxon_fields = array(
     "scrutinizerID",
     "scrutinizerDate",
     "referenceID",
+    "extinct",
     "link"
 );
 fputcsv($taxa_out, $taxon_fields, "\t", escape: "\\");
@@ -403,7 +404,7 @@ while(true){
 
                $taxon_row['scrutinizer'] = $scrutinizer;
                $taxon_row['scrutinizerID'] = $scrutinizer_id;
-
+               $taxon_row['extinct'] =  $taxon->getFossilStatus() ? 'true': 'false';
 
             }else{
                 

@@ -72,7 +72,7 @@ while(true){
     // debug
     // if($offset >= 100000) break;
 
-    $response = $mysqli->query("SELECT id, name_alpha FROM `names` limit 10000 OFFSET $offset");
+    $response = $mysqli->query("SELECT id, name_alpha FROM `names` ORDER BY id limit 10000 OFFSET $offset");
     
     // if we get nothing back then we have finished
     if($response->num_rows == 0) break;
@@ -252,6 +252,9 @@ function process_name($name, $version_name){
             // flag if this is a hybrid taxon
             $out['hybrid_taxon_b'] =  $taxon->getHybridStatus();
 
+            // flag its fossil status
+            $out['fossil_taxon_b'] =  $taxon->getFossilStatus();
+
             // looking up the way - building links 
             $parent = $taxon->getParent();
 
@@ -262,6 +265,7 @@ function process_name($name, $version_name){
 
             // some useful stats for rendering the tree
             $out['child_taxon_count_i'] = $taxon->getChildCount();
+
 
         }else{
 

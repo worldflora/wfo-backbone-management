@@ -120,7 +120,9 @@ function generate_metadata($file_path, $pub_date, $version){
 }
 
 // needed to handle multibyte chars and upper casing the first
-function mb_ucfirst($str) {
-    $fc = mb_strtoupper(mb_substr($str, 0, 1));
-    return $fc.mb_substr($str, 1);
+if (!function_exists('mb_ucfirst')) {
+    function mb_ucfirst($str) {
+        $fc = mb_strtoupper(mb_substr($str, 0, 1));
+        return $fc.mb_substr($str, 1);
+    }
 }

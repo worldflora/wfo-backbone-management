@@ -136,7 +136,6 @@ class TaxonGqlType extends ObjectType
                             return $taxon->getReferences('literature');
                         }
                     ]
-
 /*
                     'descriptionMarkDown' => [
                         'type' => Type::string(),

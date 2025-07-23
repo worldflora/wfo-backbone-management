@@ -1,0 +1,41 @@
+svg {
+  background-color: white;
+
+  fill:none;
+  stroke:black;
+  stroke-width:10;
+}
+
+.kingdom{
+  stroke-width:1000;
+}
+
+.species{
+  stroke-width:5;
+}
+
+.subspecies,
+.variety{
+  stroke-width:10;
+}
+
+.wfo-4100002058{
+  stroke:brown !important;
+  stroke-width: 100;
+}
+
+.wfo-4100002058 .genus
+.wfo-4100002058 .species,
+.wfo-4100002058 .subspecies,
+.wfo-4100002058 .variety{
+  stroke:brown !important;
+  stroke-width:5;
+}
+
+.wfo-7000000218{
+  stroke:blue;
+}
+
+.wfo-7000000654{
+  stroke:orange;
+}

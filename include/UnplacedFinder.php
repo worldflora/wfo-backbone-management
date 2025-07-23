@@ -91,33 +91,75 @@ class UnplacedFinder{
        
         global $mysqli;
 
-        $sql = " FROM `names` AS n LEFT JOIN `taxon_names` AS tn ON n.id = tn.name_id JOIN `matching_hints` AS h ON n.id = h.name_id LEFT JOIN `gbif_occurrence_count` as g on n.id = g.`name_id` WHERE tn.id IS NULL AND h.hint = '{$this->name->getNameString()}' ";
-         
-        // filter for deprecated
+        if(!$this->name || $this->name->getRank() != 'family'){
+            $this->unplacedNames[] = array();
+            return;
+        }
+        
+        // we are going to do a recursion down from the family taxon 
+        // to get all the generic names that have been placed (either as accepted or as synonyms)
+        // we will then get all the unplaced names that have those names as genus parts in their
+        // names
+        $taxon = Taxon::getTaxonForName($this->name);
+
+        // allow for exclusion of deprecated names.
+        $deprecated_clause = '';
         if(!$this->includeDeprecated){
-            $sql .= " AND n.`status` != 'deprecated'";
+            $deprecated_clause = " AND n.`status` != 'deprecated'";
         }
 
-        // do the count
-        $count_sql = "SELECT count(*) as num " . $sql;
-        $response = $mysqli->query($count_sql);
-        if($mysqli->error) error_log($mysqli->error . "\n". $count_sql);
-        $row = $response->fetch_assoc();
-        $this->totalUnplacedNames = $row['num'];
+        $sql_cte = "
+            WITH RECURSIVE possible_taxa  AS
+            (
+                SELECT t.id, n.`name`, n.`rank` 
+                FROM taxa as t 
+                JOIN taxon_names as tn on t.id = tn.taxon_id
+                JOIN `names` as n on tn.name_id = n.id and n.`rank` in ('subfamily', 'supertribe', 'tribe', 'subtribe', 'genus')
+                WHERE t.parent_id = {$taxon->getId()}
+                UNION ALL
+                SELECT t.id, n.`name`, n.`rank` 
+                FROM taxa as t 
+                JOIN taxon_names as tn on t.id = tn.taxon_id
+                JOIN `names` as n on tn.name_id = n.id and n.`rank` in ('subfamily', 'supertribe', 'tribe', 'subtribe', 'genus')
+                JOIN possible_taxa as pt on t.parent_id = pt.id
+            ),
+            just_genera as (
+                SELECT distinct(`name`) as 'genus_name' FROM possible_taxa where `rank` = 'genus'
+            )
+            ";
+         
+        // count the total number first
+        $sql = $sql_cte . "SELECT count(*) as num
+                FROM `names` as n
+                JOIN just_genera as jg on n.genus = jg.genus_name
+                LEFT JOIN `taxon_names` as tn on n.id = tn.name_id
+                LEFT JOIN `gbif_occurrence_count` as g on n.id = g.`name_id`
+                WHERE tn.id is null
+                {$deprecated_clause}";
+
+        $response = $mysqli->query($sql);
+        if($mysqli->error) error_log($mysqli->error . "\n". $sql);
+        $this->totalUnplacedNames = $response->fetch_assoc()['num'];
         $response->close();
 
-        // actually fetch the list - if we have more than 0 in it
-        if($this->totalUnplacedNames > 0){
-            $sql = "SELECT n.id as id " . $sql . " ORDER BY g.`count` DESC, name_alpha LIMIT " . preg_replace('/[^0-9]/', '', $this->limit) . " OFFSET " . preg_replace('/[^0-9]/', '', $this->offset);
-            $response = $mysqli->query($sql);
-            if($mysqli->error) error_log($mysqli->error . "\n". $sql);
-            while ($row = $response->fetch_assoc()) {
-                $this->unplacedNames[] = Name::getName($row['id']);
-            }
+        // fetch just this page or results
+        $sql = $sql_cte . "SELECT n.id
+                FROM `names` as n
+                JOIN just_genera as jg on n.genus = jg.genus_name
+                LEFT JOIN `taxon_names` as tn on n.id = tn.name_id
+                LEFT JOIN `gbif_occurrence_count` as g on n.id = g.`name_id`
+                WHERE tn.id is null
+                {$deprecated_clause} 
+                ORDER BY g.count desc, n.name_alpha
+                LIMIT " . preg_replace('/[^0-9]/', '', $this->limit) . " OFFSET " . preg_replace('/[^0-9]/', '', $this->offset);
+
+        $response = $mysqli->query($sql);
+        if($mysqli->error) error_log($mysqli->error . "\n". $sql);
+        while ($row = $response->fetch_assoc()) {
+            $this->unplacedNames[] = Name::getName($row['id']);
         }
 
     }
-
 
 }
 

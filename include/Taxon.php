@@ -18,6 +18,8 @@ class Taxon extends WfoDbObject{
     private bool $isHybrid = false;
     private bool $isFossil = false;
 
+    private ?int $childCount = null;
+
     protected static $loaded = array();
 
 
@@ -1370,12 +1372,19 @@ class Taxon extends WfoDbObject{
 
         global $mysqli;
 
-        $sql = "SELECT count(*) as n FROM taxa as t WHERE `parent_id` = {$this->id} AND t.`id` != {$this->id}";
-        $result = $mysqli->query($sql); 
-        $rows = $result->fetch_all(MYSQLI_ASSOC);
-        $result->close();
-        return (int)$rows[0]['n'];
+        // only run it the first time we are asked
+        if($this->childCount == null){
+            $sql = "SELECT count(*) as n FROM taxa as t WHERE `parent_id` = {$this->id} AND t.`id` != {$this->id}";
+            $result = $mysqli->query($sql); 
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->close();
+            $this->childCount = (int)$rows[0]['n'];
+        }
+ 
+        return $this->childCount;
+
     }
+
 
     /**
      * Count all the descendants without
