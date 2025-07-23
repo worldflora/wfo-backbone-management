@@ -150,7 +150,7 @@ class UnplacedFinder{
                 LEFT JOIN `gbif_occurrence_count` as g on n.id = g.`name_id`
                 WHERE tn.id is null
                 {$deprecated_clause} 
-                ORDER BY g.count desc, n.name_alpha
+                ORDER BY n.name_alpha
                 LIMIT " . preg_replace('/[^0-9]/', '', $this->limit) . " OFFSET " . preg_replace('/[^0-9]/', '', $this->offset);
 
         $response = $mysqli->query($sql);
