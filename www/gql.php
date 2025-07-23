@@ -250,7 +250,7 @@ $schema = new Schema([
                     'limit' => [
                         'type' => Type::int(),
                         'description' => "Maximum results to return.",
-                        'defaultValue' => 100
+                        'defaultValue' => 50
                     ],
                     'includeDeprecated' => [
                         'type' => Type::boolean(),
