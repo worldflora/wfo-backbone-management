@@ -1589,12 +1589,15 @@ class Taxon extends WfoDbObject{
         // no synonyms if we don't have an id yet
         if(!$this->getId()) return $this->synonyms;
 
-        $sql = "SELECT name_id FROM taxon_names WHERE taxon_id = {$this->getId()}";
+        $sql = "SELECT name_id FROM taxon_names AS tn JOIN `names` AS n on tn.name_id = n.id WHERE tn.taxon_id = {$this->getId()}";
 
         // if we aren't root we exclude ourselves
         if($this->getAcceptedName()){
-            $sql .= " and name_id != {$this->getAcceptedName()->getId()} ";
+            $sql .= " and tn.name_id != {$this->getAcceptedName()->getId()} ";
         }
+
+        // we need them in alphabetical order by default
+        $sql .= " ORDER BY n.name_alpha";
 
         $result = $mysqli->query($sql); // FIXME should be in some order
         while($row = $result->fetch_assoc()){
