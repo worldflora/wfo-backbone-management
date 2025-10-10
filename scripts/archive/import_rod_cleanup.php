@@ -11,11 +11,11 @@ require_once('../config.php');
 $in = fopen('../data/sources/rods_final_matches.csv', 'r');
 
 // throw out the header
-$header = fgetcsv($in);
+$header = fgetcsv($in, escape: "\\");
 
 $counter = 0;
 
-while($line = fgetcsv($in)){
+while($line = fgetcsv($in, escape: "\\")){
 
     $wfo_id = $line[0];
     $ipni_id = $line[3];

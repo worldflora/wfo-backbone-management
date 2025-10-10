@@ -36,7 +36,7 @@
                 exit;
             }
 
-            $header = fgetcsv($in);
+            $header = fgetcsv($in, escape: "\\");
 
             $taxon_id_index = array_search('taxonID', $header);
             $parent_index = array_search('parentNameUsageID', $header);
@@ -48,7 +48,7 @@
 
             // load the taxon id's in memory
             $taxon_ids = array();
-            while($line = fgetcsv($in)){
+            while($line = fgetcsv($in, escape: "\\")){
                 $taxon_ids[] = $line[$taxon_id_index];
             }
 
@@ -57,11 +57,11 @@
             $in = fopen('zip://' . $zip_path . '#classification.csv' , 'r');
 
             // discard the header again
-            $header = fgetcsv($in);
+            $header = fgetcsv($in, escape: "\\");
 
             // work through the lines for real and check
             // the values are in the taxon_ids
-            while($line = fgetcsv($in)){
+            while($line = fgetcsv($in, escape: "\\")){
 
                 // parent
                 if($line[$rank_index] != 'family'){

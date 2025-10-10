@@ -43,7 +43,7 @@ if(!$fp){
     exit;
 }
 
-$header = fgetcsv($fp);
+$header = fgetcsv($fp, escape: "\\");
 $deprecated_field_index = array_search('deprecated', $header); 
 
 $drop_field_indexes = array();
@@ -62,7 +62,7 @@ for ($i=0; $i < count($header); $i++) {
 }
 fputcsv($out, $new_header, "\t", escape: "\\");
 
-while($row = fgetcsv($fp)){
+while($row = fgetcsv($fp, escape: "\\")){
 
     // don't do the deprecated rows
     if($row[$deprecated_field_index] == 1) continue;

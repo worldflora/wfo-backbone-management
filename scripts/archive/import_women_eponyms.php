@@ -21,10 +21,10 @@ echo "\nIMPORTING WOMEN EPONYMS\n";
 
 $in = fopen('../data/sources/WomenPlantGenera_v1-3.csv', 'r');
 
-$header = fgetcsv($in);
+$header = fgetcsv($in, escape: "\\");
 print_r($header);
 
-while($line = fgetcsv($in)){
+while($line = fgetcsv($in, escape: "\\")){
 
     $wfo = $line[6];
     $woman_name = $line[29];

@@ -40,9 +40,9 @@ if(!file_exists($input_path)){
 
 $in = fopen($input_path, 'r');
 
-$header = fgetcsv($in);
+$header = fgetcsv($in, escape: "\\");
 
-while($line = fgetcsv($in)){
+while($line = fgetcsv($in, escape: "\\")){
     
     $wfo_id = $line[0];
     $rank = $line[1];

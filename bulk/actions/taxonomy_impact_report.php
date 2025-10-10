@@ -67,7 +67,7 @@ if(@$_GET['root_taxon_wfo']){
     fputcsv($out, $headers, escape: "\\");
 
     // start it off
-    process_name($name, $out, $headers, escape: "\\");
+    process_name($name, $out, $headers);
 
 }else{
 

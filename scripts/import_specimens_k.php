@@ -23,7 +23,7 @@ if(count($argv) > 1){
 }
 
 $in = fopen('../data/sources/TypesForRBGE.csv', 'r');
-$header = fgetcsv($in);
+$header = fgetcsv($in, escape: "\\");
 
 $not_found_out = fopen('../data/sources/TypesForRBGE_not_found.csv', $offset > 0 ? 'a' : 'w');
 if($offset == 0) fputcsv($not_found_out, $header); // same as we got 
@@ -38,7 +38,7 @@ if($offset == 0){
 $matcher = new NameMatcherPlantList();
 
 $counter = 0;
-while($line = fgetcsv($in)){
+while($line = fgetcsv($in, escape: "\\")){
 
     if($counter < $offset){
         $counter++;

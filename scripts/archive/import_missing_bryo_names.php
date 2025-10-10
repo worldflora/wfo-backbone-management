@@ -18,13 +18,13 @@ $in = fopen('../data/Bryophytes_NOIDS_Roger.csv', 'r');
 $out = fopen('../data/Bryophytes_NOIDS_Roger_OUT.csv', 'w');
 
 // throw out header
-$header = fgetcsv($in);
+$header = fgetcsv($in, escape: "\\");
 $header[0] = str_replace("\xEF\xBB\xBF",'', $header[0]);
 array_unshift($header, "\xEF\xBB\xBF" . 'wfo_id');
 fputcsv($out, $header, escape: "\\");
 
 
-while($row = fgetcsv($in)){
+while($row = fgetcsv($in, escape: "\\")){
 
     $name = Name::getName(-1);
     $name->setStatus('unknown');

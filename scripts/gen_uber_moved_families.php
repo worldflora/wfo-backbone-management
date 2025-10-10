@@ -43,7 +43,7 @@
 
     $prev_lookup = array();
 
-    $header = fgetcsv($in);
+    $header = fgetcsv($in, escape: "\\");
 
     echo "\tRead header\n";
 
@@ -52,7 +52,7 @@
     $rank_index = array_search('taxonRank', $header);
     $name_index = array_search('scientificName', $header);
 
-    while($line = fgetcsv($in)){
+    while($line = fgetcsv($in, escape: "\\")){
         $prev_lookup[$line[$taxon_id_index]] = $line[$family_index];
         echo number_format(count($prev_lookup), 0) . "\t" . $line[$name_index] . "\n";
     }
@@ -70,7 +70,7 @@
         echo "\tOpened in classification.csv in zip file\n";
     }
 
-    $header = fgetcsv($in);
+    $header = fgetcsv($in, escape: "\\");
 
     echo "\tRead header\n";
 
@@ -85,7 +85,7 @@
 
     $counter = 0;
     $moved_count = 0;
-    while($line = fgetcsv($in)){
+    while($line = fgetcsv($in, escape: "\\")){
 
         $wfo = $line[$taxon_id_index];
         $new_family = $line[$family_index];

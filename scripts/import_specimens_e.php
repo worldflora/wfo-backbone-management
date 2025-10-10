@@ -18,11 +18,11 @@ $_SESSION['user'] = serialize(User::loadUserForDbId(1));
 $in = fopen('../data/sources/Robyns_type_list_matched.csv', 'r');
 $out = fopen('../data/sources/Robyns_returns.csv', 'w');
 
-$header = fgetcsv($in);
+$header = fgetcsv($in, escape: "\\");
 $header = array_unshift($header, 'issue');
 
 $counter = 0;
-while($line = fgetcsv($in)){
+while($line = fgetcsv($in, escape: "\\")){
 
     $wfo = $line['0'];
     if(!preg_match('/^wfo-[0-9]{10}$/', $wfo)){

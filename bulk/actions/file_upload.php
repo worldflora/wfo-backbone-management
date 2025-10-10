@@ -1,7 +1,5 @@
 <?php
 
-// work out what this is called
-
 $target_file_path = '../bulk/csv/' . basename($_FILES["incoming_file"]["name"]);
 
 if (move_uploaded_file($_FILES["incoming_file"]["tmp_name"], $target_file_path)) {

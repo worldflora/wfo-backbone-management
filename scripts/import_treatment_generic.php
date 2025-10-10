@@ -49,7 +49,7 @@ $in = fopen($file_path, 'r');
 
 fgetcsv($in); // drop header
 
-while($line = fgetcsv($in)){
+while($line = fgetcsv($in, escape: "\\")){
 
     $wfo = $line[0];
     $label = $line[1];

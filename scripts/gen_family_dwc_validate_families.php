@@ -37,7 +37,7 @@ foreach($file_list as $zip_path){
     // the column for the family name
     if($first_file){
         $first_file = false;
-        $header = fgetcsv($in);
+        $header = fgetcsv($in, escape: "\\");
         $wfo_col_index = (int)array_search('taxonID', $header);
         $family_col_index = (int)array_search('family', $header);
     }else{
@@ -45,7 +45,7 @@ foreach($file_list as $zip_path){
     }
 
     // work through all the lines
-    while($line = fgetcsv($in)){
+    while($line = fgetcsv($in, escape: "\\")){
 
         $wfo = $line[$wfo_col_index];
         $family = $line[$family_col_index];
@@ -88,12 +88,12 @@ if(file_exists($prev_path)){
     $out = fopen('../www/downloads/dwc/_emonocot_family_moved.csv', 'w');
 
     $in = fopen($prev_path, 'r');
-    $header = fgetcsv($in);
+    $header = fgetcsv($in, escape: "\\");
 
     fputcsv($out, array('wfo', 'family_previous', 'family_current'), escape: "\\");
 
     $counter = 0;
-    while($line = fgetcsv($in)){
+    while($line = fgetcsv($in, escape: "\\")){
         if(!isset($families[$line[0]]) || $families[$line[0]] != $line[1]){
             $family_previous = $line[1];
             $family_current = isset($families[$line[0]]) ? $families[$line[0]] : "DEDUPLICATED";

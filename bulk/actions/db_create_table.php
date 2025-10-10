@@ -14,7 +14,7 @@ $mysqli->query("DROP TABLE IF EXISTS $table_name");
 $in = fopen('../bulk/csv/' . $_GET['file_in'] , 'r');
 
 // read the header in and clean it up
-$header_row = sanitize_header(fgetcsv($in));
+$header_row = sanitize_header(fgetcsv($in, escape: "\\"));
 
 
 // create the table with all text fields
@@ -93,7 +93,7 @@ if($mysqli->error){
 }
 
 // read the rest of the lines into the table with insert statements.
-while($row = fgetcsv($in)){
+while($row = fgetcsv($in, escape: "\\")){
 
     $sql = "INSERT INTO $table_name (";
 
