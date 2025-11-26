@@ -233,6 +233,7 @@ class AuthorTeam{
                 $title .= " " . substr($author['birth'] ?? '', 0, 4) . "-" . substr($author['death'] ?? '', 0, 4);
             }
             
+            // FIXME: Schult.f.
             $link = '<a href="' . $author['person'] . '" title="'. $title .'">' . $abbrev . '</a>';
             $s = str_replace($abbrev, $link, $s);
 

@@ -24,6 +24,7 @@ while($row = $response->fetch_assoc()){
 
 fclose($out);
 
-exec("gzip $csv_file");
+// exec("gzip $csv_file");
+exec("zip -j $zip_file $csv_file");
 
 header("Location: index.php?action=view&phase=csv");
