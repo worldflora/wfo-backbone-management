@@ -168,8 +168,8 @@ function run_references($table){
             }
 
             // finally add the new reference to the name
-            $placement_related = $role == 'taxonomic' ? true: false;
-            $name->addReference($ref, $comment, $placement_related);
+            //$placement_related = $role == 'taxonomic' ? true: false;
+            $name->addReference($ref, $comment, $role);
             $_SESSION['references_added']++;
         
         }
