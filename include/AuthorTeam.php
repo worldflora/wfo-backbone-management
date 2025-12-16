@@ -219,31 +219,42 @@ class AuthorTeam{
 
     public function getHtmlAuthors(){
 
-        $out = '<span class="wfo-list-authors">';
-
+    
         $s = $this->team_string;
-        foreach ($this->authors as $abbrev => $author) {
-            
-            if(!$author) continue;
-            if(!$author['person']) continue;
 
-            $title = $author['label'];
+        $parts = preg_split('/( |,|&|;|\(|\))/', trim($s), -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+        //print_r($parts);
 
-            if($author['birth'] || $author['death']){
-                $title .= " " . substr($author['birth'] ?? '', 0, 4) . "-" . substr($author['death'] ?? '', 0, 4);
+        // work through each part of the tokenized string
+        for ($i=0; $i < count($parts); $i++) { 
+           
+            // is this part a match for one of the authors
+            foreach ($this->authors as $abbrev => $author) {
+
+                // nothing to link to then do nothing
+                if(!$author) continue; 
+                if(!$author['person']) continue;
+
+                if($parts[$i] == $abbrev){
+                    // this part is an author abbreviation so replace it with a link
+                    $title = $author['label'];
+                    if($author['birth'] || $author['death']){
+                        $title .= " " . substr($author['birth'] ?? '', 0, 4) . "-" . substr($author['death'] ?? '', 0, 4);
+                    }
+                    $link = '<a href="' . $author['person'] . '" title="'. $title .'">' . $abbrev . '</a>';
+                    $parts[$i] = $link;
+                }
+
+                if($parts[$i] == '&'){
+                    $parts[$i] = '&amp;';
+                }
+
             }
-            
-            // FIXME: Schult.f.
-            $link = '<a href="' . $author['person'] . '" title="'. $title .'">' . $abbrev . '</a>';
-            $s = str_replace($abbrev, $link, $s);
 
         }
-
-        $out .= $s;
-
-        $out .= "</span>";
-
-        return $out;
+        
+        // print_r($parts);
+        return '<span class="wfo-list-authors">' . implode('', $parts) . "</span>";
 
     }
 

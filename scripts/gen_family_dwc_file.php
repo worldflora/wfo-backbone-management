@@ -127,7 +127,16 @@ function process_family($family_wfo, $file_path){
             // find the associated unplaced names
             $finder = new UnplacedFinder($taxon->getAcceptedName()->getId(), 0, 1000000, false); // don't include deprecated.
             $unplaced_names = array_merge($unplaced_names, $finder->unplacedNames);
+
+            // debug
+            /*
+            foreach($finder->unplacedNames as $u){
+                $n = trim(strip_tags($u->getFullNameString(false,false)));
+                echo "\n\tUnplaced from TAXON {$u->getId()} {$n}:";
+            }
+            */
         }
+                
 
         echo "\nUnplaced names from synonyms";
         foreach ($synonyms as $name) {
@@ -138,6 +147,14 @@ function process_family($family_wfo, $file_path){
             // find associated unplaced names
             $finder = new UnplacedFinder($name->getId(), 0, 1000000, false); // no deprecated
             $unplaced_names = array_merge($unplaced_names, $finder->unplacedNames);
+
+            // debug
+            /*
+            foreach($finder->unplacedNames as $u){
+                $n = trim(strip_tags($u->getFullNameString(false,false)));
+                echo "\n\tUnplaced from SYNONYM {$u->getId()} {$n}:";
+            }
+            */
         }
 
         // add the unplaced names that are in this family to the link_index as well
@@ -322,8 +339,13 @@ function process_family($family_wfo, $file_path){
                 $row["scientificName"] = trim(strip_tags($taxon->getFullNameString(false,false)));
                 
                 // parentNameUsageID = For accepted names of taxa only the parent taxon wfo_ID
-                $row["parentNameUsageID"] = $taxon->getParent()->getAcceptedName()->getPrescribedWfoId();
-
+                // catch if we are adding code that doesn't have a parent
+                if($taxon->getParent()){
+                    $row["parentNameUsageID"] = $taxon->getParent()->getAcceptedName()->getPrescribedWfoId();
+                }else{
+                    $row["parentNameUsageID"] = '';
+                }
+                
                 // taxonomicStatus
                 $row["taxonomicStatus"] = 'Accepted';
 
@@ -350,7 +372,13 @@ function process_family($family_wfo, $file_path){
             }
 
             // taxonRemarks	= comments from name field
-            $row["taxonRemarks"] = str_replace("\n", " ", substr($name->getComment(), 0, 254)); // a hack to assure compatibility
+            if($name->getComment()){
+                $row["taxonRemarks"] = str_replace("\n", " ", substr($name->getComment(), 0, 254));
+            }else{
+                $row["taxonRemarks"] = '';
+            }
+
+             // a hack to assure compatibility
 
             // now any identifiers we can think of
             $identifiers = $name->getIdentifiers();
@@ -657,6 +685,8 @@ function process_family($family_wfo, $file_path){
 
 function check_name_links($item, &$link_index){
 
+    global $ranks_table;
+
     if(is_a($item, 'Taxon')) $name = $item->getAcceptedName();
     else $name = $item;
 
@@ -694,7 +724,14 @@ function check_name_links($item, &$link_index){
                     echo "\n\tAncestor of basionym: " . strip_tags($ans->getAcceptedName()->getFullNameString(false)) ." " . $ans->getAcceptedName()->getPrescribedWfoId();
                     $link_index[$ans->getAcceptedName()->getPrescribedWfoId()] = $ans;
                     check_name_links($ans, $link_index);
-                    if($ans->getAcceptedName()->getRank() == 'family') break;
+
+                    // are we at or above family level
+                    //if($ans->getAcceptedName()->getRank() == 'family') break;
+                    // rare instance of there not being a family in the hierarchy
+                    $family_level = array_search('family', array_keys($ranks_table));
+                    $our_level =  array_search($ans->getAcceptedName()->getRank(), array_keys($ranks_table));
+                    if ($our_level <= $family_level) break;
+
                 }
 
             }

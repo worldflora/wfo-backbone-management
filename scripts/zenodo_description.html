@@ -2,7 +2,7 @@
         Flora Online</a> (WFO) portal, and issued as editions of the <a href="https://wfoplantlist.org/">WFO Plant
         List</a>.</p>
 <p>New versions of this checklist are released every six months in June and December: this is release
-    2025-06.</p>
+    2025-12.</p>
 <p>The history of data development for the WFO taxonomic backbone is given on the WFO Plant List <a
         href="https://wfoplantlist.org/background">background page</a>. Taxonomic names are incorporated into WFO from
     nomenclators <a href="https://www.ipni.org/">International Plant Name Index</a> (IPNI) for vascular plants, and <a
@@ -20,17 +20,19 @@
     <li><strong>plant_list_2025-06.json.gz</strong> JSON formatted version of the WFO Plant List. This has been
         designed for direct import into a schemaless instance of a SOLR index and is used to drive the WFO Plant List
         API (<a href="https://list.worldfloraonline.org">https://list.worldfloraonline.org</a>) which in turn drives the
-        WFO Plant List in the portal. This is recommended if you want a local, read only version of the list rather than
+        WFO Plant List in the portal. This is recommended if you want to use a local, read only version of the list rather than
         use the API.</li>
     <li><strong>plant_list_2025-06.sql.gz</strong> This is the complete production database (minus API
         keys) as a MySQL backup file. It can be restored directly to a MySQL 8.0 or later instance if you require the
         list in SQL format.</li>
     <li><strong>ipni_to_wfo.csv.gz</strong> A file mapping all the IPNI IDs we track to their associated WFO IDs.</li>
+    <li><strong>deprecated_names_lookup.csv.gz</strong> A list of the WFO IDs of deprecated names.</li>
+    <li><strong>deduplicated_ids_lookup.csv.gz</strong> A list of the WFO IDs that have been dedupliated with the prescribed ids that should be used in their place.</li>
     <li><strong>families_dwc.tar.gz</strong> Individual Darwin Core Archive files for each of 733 recognized families.
-        If you want a single family in DwC but can&#39;t load the whole list download and expand this file. Family and
-        genus files are also available for download through the portal. These files exclude deprecated names.</li>
+        If you want a single family in DwC download and expand this file. These files exclude deprecated names.</li>
     <li><strong>_DwC_backbone_R.zip</strong> A single Darwin Core Archive file containing non deprecated names and taxa
         for use in the existing R package.</li>
     <li><strong>_uber.zip</strong> A single Darwin Core Archive file containing all names and taxa even those that are
-        deprecated along with some extra columns</li>
+        deprecated along with some extra data columns.</li>
 </ul>
+
