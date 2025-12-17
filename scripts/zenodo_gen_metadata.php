@@ -47,7 +47,12 @@ foreach($users as $user){
         // We need to get capitalisation consistent in given names
         // e.g. Ardi, Wisnu handoyo or Govaerts, Rafaël herman anna
         // should be Ardi, Wisnu Handoyo or Govaerts, Rafaël Herman Anna
-        $given =  mb_convert_case(implode(' ', $parts), MB_CASE_TITLE);
+
+        // give name might be in the form of initials J.G. or R.R.
+        $given = implode(' ', $parts);
+        $given = str_replace('.', '. ', $given); // make initials look like words
+        $given =  mb_convert_case($given, MB_CASE_TITLE);
+        $given = str_replace('. ', '.', $given); // remove space between initials we just added
 
         // Beware of 'de la' etc.
         $given = preg_replace('/ De La$/', ' de la', $given);

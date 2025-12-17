@@ -50,7 +50,17 @@ function generate_metadata($file_path, $pub_date, $version){
 
             $parts = explode(' ', trim($row['user_name']));
             $family = mb_ucfirst(mb_strtolower(array_pop($parts)));
-            $given =  mb_ucfirst(mb_strtolower(implode(' ', $parts)));
+
+            // We need to get capitalisation consistent in given names
+            // e.g. Ardi, Wisnu handoyo or Govaerts, Rafaël herman anna
+            // should be Ardi, Wisnu Handoyo or Govaerts, Rafaël Herman Anna
+
+            // give name might be in the form of initials J.G. or R.R.
+            $given = implode(' ', $parts);
+            $given = str_replace('.', '. ', $given); // make initials look like words
+            $given =  mb_convert_case($given, MB_CASE_TITLE);
+            $given = str_replace('. ', '.', $given); // remove space between initials we just added
+            //$given =  mb_ucfirst(mb_strtolower(implode(' ', $parts)));
 
             $users[$row['orcid']] = array(
                 'sort_name' => $family . ' ' . $given,
