@@ -507,18 +507,26 @@ function process_family($family_wfo, $file_path){
                 // FIXME: These names have to match names in data for this to work
                 if($an->getRank() == 'phylum'){
                     switch ($an->getAcceptedName()->getNameString()) {
+                        
                         case 'Angiosperms':
                             $major_group = "A";
                             break;
-                        case 'Bryophytes':
+                        
+                        case 'Bryobiotina':
                             $major_group = "B";
                             break;
-                        case 'Gymnosperms':
+
+                        case 'Pinophyta':
+                        case 'Ginkgophyta':
+                        case 'Cycadophyta':
+                        case 'Lycopodiophyta':
                             $major_group = "G";
                             break;
-                        case 'Pteridophytes':
+
+                        case 'Polypodiophyta':
                             $major_group = "P";
                             break;
+                        
                         default:
                             $major_group = $an->getAcceptedName()->getNameString();
                             break;
