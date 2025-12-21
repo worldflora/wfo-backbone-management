@@ -556,9 +556,7 @@ function process_family($family_wfo, $file_path){
             }
 
 
-
             if(!$ancestors){
-
                 // We don't have a placement so how do we work out what family to 
                 // put it in?   
 
@@ -567,7 +565,7 @@ function process_family($family_wfo, $file_path){
 
                 // if we still don't have anything use the family we are working on now
                 if(!$row['family']) $row['family'] = $family_name->getNameString();
-            
+
             }
 
             foreach($ancestors as $an){
@@ -589,6 +587,18 @@ function process_family($family_wfo, $file_path){
                         break;
                 }
             }
+
+            // super control over family placement to make sure code is not assigned a family
+            // not sure how this is happening but we can fix it at this point
+            $t = Taxon::getTaxonForName($name);
+            if($t && $t->getId()){
+                // yes it is an accepted name
+                $rank = $name->getRank();
+                $family_level = array_search('family', array_keys($ranks_table));
+                $our_level =  array_search($rank, array_keys($ranks_table));
+                if ($our_level <= $family_level) $row['family'] = null;
+            }
+
 
             // verbatimTaxonRank
             $above_species = true;
@@ -736,9 +746,9 @@ function check_name_links($item, &$link_index){
                     // are we at or above family level
                     //if($ans->getAcceptedName()->getRank() == 'family') break;
                     // rare instance of there not being a family in the hierarchy
-                    $family_level = array_search('family', array_keys($ranks_table));
-                    $our_level =  array_search($ans->getAcceptedName()->getRank(), array_keys($ranks_table));
-                    if ($our_level <= $family_level) break;
+                   //$family_level = array_search('family', array_keys($ranks_table));
+                   //$our_level =  array_search($ans->getAcceptedName()->getRank(), array_keys($ranks_table));
+                   //if ($our_level <= $family_level) break;
 
                 }
 
@@ -811,7 +821,14 @@ function guesstimate_family($name){
 
 function get_family_name_for_taxon($taxon){
 
+    global $ranks_table;
+
     if(!$taxon->getId()) return null;
+
+    // taxa above the family level aren't in families
+    $family_level = array_search('family', array_keys($ranks_table));
+    $our_level =  array_search($taxon->getAcceptedName()->getRank(), array_keys($ranks_table));
+    if ($our_level <= $family_level) return null;
 
     // genus is placed in the taxonomy
     $ancestors = $taxon->getAncestors();

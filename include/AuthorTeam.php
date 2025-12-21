@@ -222,6 +222,8 @@ class AuthorTeam{
     
         $s = $this->team_string;
 
+        if(!$s) return "";
+
         $parts = preg_split('/( |,|&|;|\(|\))/', trim($s), -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
         //print_r($parts);
 

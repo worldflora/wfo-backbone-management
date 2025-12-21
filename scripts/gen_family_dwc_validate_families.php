@@ -41,7 +41,7 @@ foreach($file_list as $zip_path){
         $wfo_col_index = (int)array_search('taxonID', $header);
         $family_col_index = (int)array_search('family', $header);
     }else{
-        fgetcsv($in); // just skip the header
+        fgetcsv($in, escape: "\\"); // just skip the header
     }
 
     // work through all the lines
@@ -53,9 +53,8 @@ foreach($file_list as $zip_path){
         if(isset($families[$wfo])){
 
             if($families[$wfo] != $family){
-                echo "wfo: $wfo has family $family when previously it had $families[$wfo]\n";
                 print_r($line);
-                exit;
+                exit("wfo: $wfo has family $family when previously it had $families[$wfo]\n");
             }
 
         }else{

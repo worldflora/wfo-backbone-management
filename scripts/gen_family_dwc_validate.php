@@ -61,26 +61,31 @@
 
             // work through the lines for real and check
             // the values are in the taxon_ids
+            $error_count = 0;
             while($line = fgetcsv($in, escape: "\\")){
 
                 // parent
                 if($line[$rank_index] != 'family'){
                     if($line[$parent_index] && !in_array($line[$parent_index], $taxon_ids)){
                         echo "\n\tParent missing:\t{$line[$taxon_id_index]}\t{$line[$parent_index]}\t{$line[$name_index]}"; 
+                        $error_count++;
                     }
                 }
 
                 // accepted
                 if($line[$accepted_index] && !in_array($line[$accepted_index], $taxon_ids)){
                     echo "\n\tAccepted missing:\t{$line[$taxon_id_index]}\t{$line[$accepted_index]}\t{$line[$name_index]}"; 
+                    $error_count++;
                 }
 
                 // basionym
                 if($line[$basionym_index] && !in_array($line[$basionym_index], $taxon_ids)){
                     echo "\n\tBasionym missing:\t{$line[$taxon_id_index]}\t{$line[$basionym_index]}\t{$line[$name_index]}"; 
+                    $error_count++;
                 }
 
             }
+            if($error_count) exit("\nThere were {$error_count} errors in this file.");
 
     }
 
