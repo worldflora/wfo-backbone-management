@@ -42,7 +42,7 @@ foreach($users as $user){
        // $meta['type'] = "DataCurator";
         $meta['orcid'] = $user->getOrcidId();
         $parts = explode(' ', trim($user->getName()));
-        $family = mb_ucfirst(mb_strtolower(array_pop($parts)));
+        $family = ucfirst(mb_strtolower(array_pop($parts)));
 
         // We need to get capitalisation consistent in given names
         // e.g. Ardi, Wisnu handoyo or Govaerts, Rafaël herman anna
