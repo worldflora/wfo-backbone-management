@@ -1,4 +1,6 @@
 <?php
+require_once('../config.php');
+
 /*
 
     Will create an entry in the previous classifications table for any name
@@ -34,9 +36,30 @@ CREATE TABLE `previous_placements` (
 
 */
 
-// FIXME: RUN A CHECK TO SEE IF THIS CLASSIFICATION HAS BEEN TAGGED BEFORE AND ASK IF THEY WANT TO DELETE IT
+// date for classification must be passed in.
+if(count($argv) < 2 || !preg_match('/^[0-9]{4}-[0-9]{2}$/', $argv[1]) ){
+    echo "\nYou must provide a publish date in the format 2023-06\n";
+    exit;
+}
 
-$classification = '2001-12';
+$classification = $argv[1];
+
+echo "\nTagging with classification called: {$classification}";
+
+$check_sql = "SELECT count(*) as n FROM previous_placements WHERE classification = '{$classification}'";
+$response = $mysqli->query($check_sql);
+$row = $response->fetch_assoc();
+
+if($row['n'] != 0){
+    $count = number_format($row['n'], 0);
+    echo "\nThat tag is in use to tag {$count} names.";
+    echo "\nCan't overwrite. You'll need to delete them out first.\n";
+    exit();
+}
+
+echo "\nNo names are tagged with {$classification}";
+
+echo "\nRunning tag ... ";
 
 $update_sql = "INSERT INTO previous_placements (`name_id`, `role`, `placed_in`, `classification`)
 
@@ -106,3 +129,11 @@ changed_placements as (
 )
 
 SELECT name_id, current_role, current_placed_in_id, '{$classification}' FROM changed_placements;";
+
+$response = $mysqli->query($update_sql);
+
+$count = number_format($mysqli->affected_rows);
+
+echo "\nAdded {$classification} to {$count} tagged names.\n";
+
+

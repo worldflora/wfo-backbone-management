@@ -21,8 +21,14 @@ if (!$mysqli->set_charset("utf8mb4")) {
   echo printf("Error loading character set utf8: %s\n", $mysqli->error);
 }
 
+// an api key for downloading backups and things we don't want generally open
+define('RHAKHIS_BEARER_TOKEN', $bearer_token);
+
+// an api key for downloading backups and things we don't want generally open
+define('RHAKHIS_TOP_COPY_URL', $top_copy_url);
+
 // ORCID Connection details
-// client id and secret are loaded in the secret file
+// client id and secret are loaded in the secret file 
 define('ORCID_CLIENT_ID', $orcid_client_id);
 define('ORCID_CLIENT_SECRET', $orcid_client_secret);
 define('ORCID_REDIRECT_URI', $orcid_redirect_uri);
