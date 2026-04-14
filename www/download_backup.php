@@ -18,7 +18,7 @@ if(!BearerToken::authorized()){
     http_response_code(401);
     header('Content-Type: application/json');
     echo json_encode((object)array(
-        'status' => 'error',
+        'success' => false,
         'message' => 'You need to pass a bearer token to be able to access this resource.'
     ));
     exit;
@@ -46,7 +46,7 @@ if(!isset($_GET['filename'])){
 
     header('Content-Type: application/json');
     echo json_encode((object)array(
-        'status' => 'success',
+        'success' => true,
         'message' => 'Here is a list of the backup files.',
         'files' => $out
     ));
