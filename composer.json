@@ -1,5 +1,5 @@
 {
     "require": {
-        "webonyx/graphql-php": "^14.3"
+        "webonyx/graphql-php": "^15.0"
     }
 }
