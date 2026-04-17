@@ -39,7 +39,7 @@ $data = curl_exec($ch);
 
 $orcid_response = json_decode($data);
 
-// var_dump($orcid_response);
+//echo $data;
 
 // what kind of response is it?
 if(isset($orcid_response->access_token) ){

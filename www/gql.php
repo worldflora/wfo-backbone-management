@@ -42,7 +42,7 @@ $schema = new Schema([
         'fields' => [
             'getSystemMessage' => [
                 'description' => "Get the current system-wide message. e.g. scheduled outage.",
-                'type' => Type::string(),
+                'type' => Type::listOf(Type::string()),
                 'resolve' => function() {
                     global $system_message;
                     return $system_message;
