@@ -28,6 +28,12 @@ class BearerToken{
                 return $matches[1];
             }
         }
+
+        // for testing purposes we allow the token to be passed as a request parameter
+        // this shouldn't be done in production
+        if(isset($_REQUEST['bearer_token'])) return $_REQUEST['bearer_token'];
+
+        // not found one so return null
         return null;
     }
 
