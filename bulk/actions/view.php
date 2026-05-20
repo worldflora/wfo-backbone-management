@@ -37,7 +37,7 @@
 <body>
     <?php
     if($system_message){
-        echo "<p style=\"background-color: black; color:white; padding: 0.3em; border: solid 1px gray; margin: 0px;\"><strong>&nbsp;⚠️&nbsp;System Message:&nbsp;</strong>$system_message</p>";
+        echo "<p style=\"background-color: black; color:white; padding: 0.3em; border: solid 1px gray; margin: 0px;\"><strong>&nbsp;⚠️&nbsp;System Message:&nbsp;</strong>{$system_message[0]}</p>";
         echo "<hr/>";
     }
 ?>

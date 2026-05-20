@@ -24,6 +24,7 @@ class Name extends WfoDbObject{
     private ?int $preferredIpniIdentifierId = null; // saved and loaded to the names table
     private ?string $preferredIpniIdentifier = null; // loaded on demand from the identifiers table
 
+    private ?Array $previousPlacements = null; // we keep track of previous places this name has used
 
     private Array $all_ids = array();
     private Array $hints = array();
@@ -1722,6 +1723,47 @@ class Name extends WfoDbObject{
         }
 
         return $users;
+    }
+
+    public function getPreviousPlacements(){
+
+        global $mysqli;
+
+        // load them if this is the first time of asking
+        if($this->previousPlacements == null){ // might be an empty array    
+            $response = $mysqli->query("SELECT * FROM `previous_placements` WHERE `name_id` = {$this->getId()} ORDER BY `classification` DESC");
+            $this->previousPlacements = array();
+            while($ob = $response->fetch_object()){
+
+                // convert the db ids to objects
+                $ob->name = $this;
+                if($ob->placed_in){
+                    $ob->placedInName = Name::getName($ob->placed_in);
+                }else{
+                    $ob->placedInName = null;
+                }
+                unset($ob->placed_in);
+                unset($ob->name_id);
+
+                // parts needed to display the classification nicely
+                list($year, $month_number) = explode('-', $ob->classification);
+
+                $date   = DateTime::createFromFormat('!m', $month_number);
+                $ob->classificationMonthName = $date->format('F');
+                $ob->classificationYear = $year;
+                $ob->classificationString = $ob->classification;
+                unset($ob->classification);
+
+                // make it clear this is a change in role
+                $ob->newRole = $ob->role;
+                unset($ob->role);
+
+                $this->previousPlacements[] = $ob;
+            }
+        }
+
+        return $this->previousPlacements;
+
     }
 
 

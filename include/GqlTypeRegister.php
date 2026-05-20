@@ -9,6 +9,7 @@ require_once('../include/NameIpniDifferencesGqlType.php');
 require_once('../include/RankGqlType.php');
 require_once('../include/UpdateResponseGqlType.php');
 require_once('../include/NamePlacerGqlType.php');
+require_once('../include/NamePreviousPlacementGqlType.php');
 require_once('../include/NamePlacer.php');
 require_once('../include/SynonymMoverGqlType.php');
 require_once('../include/ChildMoverGqlType.php');
@@ -22,6 +23,8 @@ require_once('../include/ReferenceGqlType.php');
 require_once('../include/ReferenceUsageGqlType.php');
 require_once('../include/AuthorTeamMemberGqlType.php');
 
+
+
 /*
 
     Register of types because the schema must only have one instance 
@@ -34,6 +37,7 @@ class TypeRegister {
     private static $taxonType;
     private static $nameType;
     private static $nameMatchesType;
+    private static $namePreviousPlacementType;
     private static $nameIpniDifferencesType;
     private static $rankType;
     private static $updateResponseType;
@@ -50,7 +54,7 @@ class TypeRegister {
     private static $referenceType;
     private static $referenceUsageType;
     private static $authorTeamMemberType;
-
+    
     public static function taxonType(){
         return self::$taxonType ?: (self::$taxonType = new TaxonGqlType());
     }
@@ -61,6 +65,10 @@ class TypeRegister {
     
     public static function nameMatchesType(){
         return self::$nameMatchesType ?: (self::$nameMatchesType = new NameMatchesGqlType());
+    }
+
+    public static function namePreviousPlacementType(){
+        return self::$namePreviousPlacementType ?: (self::$namePreviousPlacementType = new NamePreviousPlacementGqlType());
     }
 
     public static function nameIpniDifferencesType(){

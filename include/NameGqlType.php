@@ -281,6 +281,14 @@ class NameGqlType extends ObjectType
                         'resolve' => function($name){
                             return new NameIpniDifferences($name);
                         }
+                    ],
+
+                    'previousPlacements' => [
+                        'type' => Type::listOf(TypeRegister::namePreviousPlacementType()),
+                        'description' => "Placements of this name in previous classifications",
+                        'resolve' => function($name){
+                            return $name->getPreviousPlacements();
+                        }
                     ]
                 ];
             }
