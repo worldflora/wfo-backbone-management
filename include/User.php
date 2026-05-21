@@ -4,6 +4,7 @@ class User{
 
     private ?int $id = null;
     private ?string $name = null;
+    private ?string $nameCanonical = null;
     private ?string $email = null;
     private ?string $uri = null;
     private ?string $wfoAccessToken = null;
@@ -28,6 +29,7 @@ class User{
         if($args && is_array($args)){
             $this->id = $args['id'];
             $this->name = $args['name'];
+            $this->nameCanonical = $args['name_canonical'];
             $this->email = $args['email'];
             $this->uri = $args['uri'];
             $this->wfoAccessToken = $args['wfo_access_token'];
@@ -100,12 +102,13 @@ class User{
 
             // CREATING
             $stmt = $mysqli->prepare("INSERT 
-                INTO `users` (`name`, `email`, `uri`, `role`, `wfo_access_token`, `orcid_id`,`orcid_access_token`,`orcid_refresh_token`, `orcid_expires_in`, `orcid_raw`) 
-                VALUES (?,?,?,?,?,?,?,?,?,?)");
+                INTO `users` (`name`, `name_canonical`, `email`, `uri`, `role`, `wfo_access_token`, `orcid_id`,`orcid_access_token`,`orcid_refresh_token`, `orcid_expires_in`, `orcid_raw`) 
+                VALUES (?,?,?,?,?,?,?,?,?,?,?)");
             if($mysqli->error) error_log($mysqli->error); // should only have prepare errors during dev
     
-            $stmt->bind_param("ssssssssss",
+            $stmt->bind_param("sssssssssss",
                 $this->name,
+                $this->nameCanonical,
                 $this->email,
                 $this->uri,
                 $this->role,
@@ -243,6 +246,32 @@ class User{
     public function setName($name)
     {
         $this->name = $name;
+
+        // if we haven't got a canonical name then we set one
+        // doing the best we can to get it to go family, given
+        // it can be edited later
+        // this logic should only be used for new users.
+        if(!$this->nameCanonical){
+
+            $parts = explode(' ', trim($name));
+            $family = ucfirst(mb_strtolower(array_pop($parts)));
+
+            // We need to get capitalisation consistent in given names
+            // e.g. Ardi, Wisnu handoyo or Govaerts, Rafaël herman anna
+            // should be Ardi, Wisnu Handoyo or Govaerts, Rafaël Herman Anna
+
+            // give name might be in the form of initials J.G. or R.R.
+            $given = implode(' ', $parts);
+            $given = str_replace('.', '. ', $given); // make initials look like words
+            $given =  mb_convert_case($given, MB_CASE_TITLE);
+            $given = str_replace('. ', '.', $given); // remove space between initials we just added
+
+            // Beware of 'de la' etc.
+            $given = preg_replace('/ De La$/', ' de la', $given);
+            
+            $this->nameCanonical =   "$family, $given";
+
+        }
 
         return $this;
     }

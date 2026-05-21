@@ -248,7 +248,7 @@ $ranks_table = array(
     "children" => array(), // permissible ranks for child taxa
     "abbreviation" => "subf.", // official abbreviation
     "plural" => "Subforms",
-    "aka" => array("subforma") // alternative representations for import
+    "aka" => array("subforma", "subfo.") // alternative representations for import
   ),
 
   "lusus" => array(

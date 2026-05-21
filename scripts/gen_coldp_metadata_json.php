@@ -2,6 +2,17 @@
 
 require_once('../config.php');
 
+/*
+ALTER TABLE `users` 
+ADD COLUMN `name_canonical` VARCHAR(45) NULL AFTER `name`;
+
+UPDATE `users` SET `name_canonical` = concat(
+	SUBSTRING_INDEX(`name`,' ',-1), ', ', LEFT(`name`, LENGTH(`name`) - LENGTH(SUBSTRING_INDEX(`name`, ' ', -1)) - 1) 
+) 
+WHERE id > 0;
+
+*/
+
 // if this is run as itself then generate a file in the data director
 if($argv[0] == "gen_coldp_metadata_json.php"){
 
