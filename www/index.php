@@ -39,7 +39,7 @@ require_once('../bulk/actions/' . $action . '.php');
 function get_rhakhis_uri($wfo){
 
     // the name created an link to view it in new tab.
-    // this is a bit hacky on which server we are on
+    // this is a bit hacky on which server we are on 
     // FIXME
     switch ($_SERVER['SERVER_NAME']) {
 
@@ -49,13 +49,13 @@ function get_rhakhis_uri($wfo){
             break;
 
         // staging
-        case 'rhakhis.rbge.info':
-            $uri = 'https://rhakhis.rbge.info/rhakhis/ui/index.html#' . $wfo;
+        case 'rhakhis-test.rbge.info':
+            $uri = 'https://rhakhis-test.rbge.info/index.html#' . $wfo;
             break;
     
         // live
-        case 'list.worldfloraonline.org':
-            $uri = 'https://list.worldfloraonline.org/rhakhis/ui/#' . $wfo;
+        case 'rhakhis-live.rbge.info':
+            $uri = 'https://rhakhis-live.rbge.info/index.html#' . $wfo;
             break;
         
         // unknown
