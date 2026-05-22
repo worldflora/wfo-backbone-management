@@ -70,7 +70,10 @@
             |
             <a href="index.php?action=view&phase=examples">Examples</a>
             |
+            <a href="index.php?action=view&phase=update_user_name">User Names</a>
+            |
             <a href="index.php?action=view&phase=switch_user">su</a>
+
             &nbsp;
             <span style="border: solid 1px black; padding: 0.2em">
                 <?php
