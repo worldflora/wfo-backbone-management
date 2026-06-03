@@ -8,14 +8,11 @@
     // php -d memory_limit=3G gen_plant_list.php
 
     import the output into solr
-    curl -X POST -H 'Content-type:application/json' 'http://localhost:8983/solr/wfo/update?commit=true' --data-binary @plant_list_2022-12.json  --user wfo:****
-
-    // this version doesn't run out of memory
-    curl -H 'Content-type:application/json' 'http://localhost:8983/solr/wfo/update?commit=true' -X POST -T plant_list_2025-12.json --user wfo:****
+    curl -H 'Content-type:application/json' 'http://localhost:8983/solr/wfo-api/update?commit=true' -X POST -T plant_list_2025-12.json --user wfo:****
 
     clear down solr
-    curl -X POST -H 'Content-Type: application/json' 'http://localhost:8983/solr/wfo/update' --data-binary '{"delete":{"query":"classification_id_s:9999-04"} }' --user wfo:****
-    curl -X POST -H 'Content-Type: application/json' 'http://localhost:8983/solr/wfo/update' --data-binary '{"commit":{} }' --user wfo:****
+    curl -X POST -H 'Content-Type: application/json' 'http://localhost:8983/solr/wfo-api/update' --data-binary '{"delete":{"query":"classification_id_s:2025-06"} }' --user wfo:****
+    curl -X POST -H 'Content-Type: application/json' 'http://localhost:8983/solr/wfo-api/update' --data-binary '{"commit":{} }' --user wfo:****
 
 */
 

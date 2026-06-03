@@ -230,6 +230,13 @@ $ranks_table = array(
     "aka" => array("nothovar.", "var.", "var") // alternative representations for import
   ),
 
+  "convar" => array(
+    "children" => array(), // permissible ranks for child taxa
+    "abbreviation" => "convar.", // official abbreviation
+    "plural" => "Convars",
+    "aka" => array("convariety", "convarietas") // alternative representations for import
+  ),
+
   "subvariety" => array(
     "children" => array("form"), // permissible ranks for child taxa
     "abbreviation" => "subvar.", // official abbreviation

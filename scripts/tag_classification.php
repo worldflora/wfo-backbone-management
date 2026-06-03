@@ -6,7 +6,6 @@ require_once('../config.php');
     Will create an entry in the previous classifications table for any name
     who's role has changed since the last classification stored in previous classifications.
 
-
     In proceedural style this is described as 
     - for each name record
     - Calculate its current role in the taxonomy and parent (or accepted) placement
