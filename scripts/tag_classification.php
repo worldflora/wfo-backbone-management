@@ -60,7 +60,7 @@ echo "\nNo names are tagged with {$classification}";
 
 echo "\nRunning tag ... ";
 
-$update_sql = "INSERT INTO previous_placements (`name_id`, `role`, `placed_in`, `classification`)
+$update_sql = "INSERT INTO previous_placements (`name_id`, `role`, `placed_in_wfo`, `classification`)
 
 WITH 
 
@@ -74,7 +74,7 @@ last_placements as (
 	SELECT 
 		n.id as name_id, 
 		pp.`role`,
-        pp.`placed_in` as placed_in_id,
+        pp.`placed_in_wfo` as placed_in_wfo,
         pp.classification,
         pp.id AS previous_placement_id
 	FROM `names` AS n
@@ -99,36 +99,38 @@ current_placements as (
 			NULL,
 			IF(
 				acn.name_id = n.id, # the accepted name of taxon is same as name - it is the accepted name
-                ptn.name_id, # placed in the parent taxon
-                acn.name_id # is a synonym so placed in the synonym
+                parent_identifiers.`value`, # placed in the parent taxon
+                accepted_identifiers.`value` # is a synonym so placed in the synonym
             ) 
-		) AS 'placed_in_id'
+		) AS 'placed_in_wfo'
     FROM `names` AS n
     LEFT JOIN taxon_names AS tn ON n.id = tn.name_id
     LEFT JOIN taxa AS t ON tn.taxon_id = t.id
     LEFT JOIN taxon_names AS acn ON t.taxon_name_id = acn.id # accepted names for the taxa
+    JOIN `names` as accepted_names on accepted_names.id = acn.name_id
+    JOIN `identifiers` as accepted_identifiers on accepted_identifiers.id = accepted_names.prescribed_id and accepted_identifiers.kind = 'wfo'
     LEFT JOIN taxa AS pt ON t.parent_id = pt.id # parent taxon
     LEFT JOIN taxon_names AS ptn ON pt.taxon_name_id = ptn.id
+    JOIN `names` as parent_names on parent_names.id = ptn.name_id
+    JOIN `identifiers` as parent_identifiers on parent_identifiers.id = parent_names.prescribed_id and parent_identifiers.kind = 'wfo'
 ),
 
 #select * from current_placements where name_id = 1716323;
 
-
 # compare last placements with current placements
 changed_placements as (
 	SELECT 
-    cp.name_id as name_id, cp.`role` as current_role, cp.placed_in_id as current_placed_in_id,
-    lp.name_id as last_name_id, lp.`role` as last_role, lp.placed_in_id as last_placed_in_id, lp.classification as last_classification
+    cp.name_id as name_id, cp.`role` as current_role, cp.placed_in_wfo as current_placed_in_wfo,
+    lp.name_id as last_name_id, lp.`role` as last_role, lp.placed_in_wfo as last_placed_in_wfo, lp.classification as last_classification
     FROM last_placements AS lp
     JOIN current_placements AS cp ON lp.name_id = cp.name_id
     WHERE 
 		NOT(lp.`role` <=> cp.`role`) # NULL safe not comparison
 	OR
-		NOT(lp.`placed_in_id` <=> cp.`placed_in_id`)
+		NOT(lp.`placed_in_wfo` <=> cp.`placed_in_wfo`)
 )
 
-SELECT name_id, current_role, current_placed_in_id, '{$classification}' FROM changed_placements;";
-
+SELECT name_id, current_role, current_placed_in_wfo, '{$classification}' FROM changed_placements;";
 $response = $mysqli->query($update_sql);
 
 $count = number_format($mysqli->affected_rows);

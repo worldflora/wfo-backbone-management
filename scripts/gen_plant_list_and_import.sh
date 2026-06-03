@@ -19,7 +19,7 @@ else
 fi
 
 rm   ../data/versions/plant_list_$1.json
-php -d memory_limit=3G gen_plant_list.php $1
+php -d memory_limit=6G gen_plant_list.php $1
 curl -H 'Content-type:application/json' 'http://localhost:8983/solr/wfo-api/update?commit=true' -X POST -T ../data/versions/plant_list_$1.json --user $2
 gzip -f ../data/versions/plant_list_$1.json
 rm ../data/versions/plant_list_$1.json

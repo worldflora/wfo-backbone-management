@@ -11,7 +11,7 @@
     curl -H 'Content-type:application/json' 'http://localhost:8983/solr/wfo-api/update?commit=true' -X POST -T plant_list_2025-12.json --user wfo:****
 
     clear down solr
-    curl -X POST -H 'Content-Type: application/json' 'http://localhost:8983/solr/wfo-api/update' --data-binary '{"delete":{"query":"classification_id_s:2025-06"} }' --user wfo:****
+    curl -X POST -H 'Content-Type: application/json' 'http://localhost:8983/solr/wfo-api/update' --data-binary '{"delete":{"query":"classification_id_s:2026-06"} }' --user wfo:****
     curl -X POST -H 'Content-Type: application/json' 'http://localhost:8983/solr/wfo-api/update' --data-binary '{"commit":{} }' --user wfo:****
 
 */
@@ -197,6 +197,21 @@ function process_name($name, $version_name){
 
     }
 
+    // previous placements
+    $out['previous_placements_new_role_ss'] = array();
+    $out['previous_placements_classification_ss'] = array();
+    $out['previous_placements_in_wfo_id_ss'] = array();
+    $placements = $name->getPreviousPlacements();
+    foreach ($placements as $placement) {
+        $out['previous_placements_new_role_ss'][] = $placement->newRole;
+        $out['previous_placements_classification_ss'][] = $placement->classificationString;
+        if($placement->placedInName){
+            $out['previous_placements_in_wfo_id_ss'][] = $placement->placedInName->getPrescribedWfoId();
+        }else{
+            $out['previous_placements_in_wfo_id_ss'][] = '-';
+        }
+    }
+    
     // set a preferred ipni id
     $out['ipni_preferred_id_s'] = $name->getPreferredIpniId();
 

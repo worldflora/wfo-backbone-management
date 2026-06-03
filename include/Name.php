@@ -1731,18 +1731,21 @@ class Name extends WfoDbObject{
 
         // load them if this is the first time of asking
         if($this->previousPlacements == null){ // might be an empty array    
+            
             $response = $mysqli->query("SELECT * FROM `previous_placements` WHERE `name_id` = {$this->getId()} ORDER BY `classification` DESC");
+            
             $this->previousPlacements = array();
+            
             while($ob = $response->fetch_object()){
 
                 // convert the db ids to objects
                 $ob->name = $this;
-                if($ob->placed_in){
-                    $ob->placedInName = Name::getName($ob->placed_in);
+                if($ob->placed_in_wfo){
+                    $ob->placedInName = Name::getName($ob->placed_in_wfo);
                 }else{
                     $ob->placedInName = null;
                 }
-                unset($ob->placed_in);
+                unset($ob->placed_in_wfo);
                 unset($ob->name_id);
 
                 // parts needed to display the classification nicely
