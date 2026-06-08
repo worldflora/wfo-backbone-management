@@ -239,6 +239,14 @@ class User{
     }
 
     /**
+     * Get the value of standardised version of the name for publications.
+     */ 
+    public function getNameCanonical()
+    {
+        return $this->nameCanonical;
+    }
+
+    /**
      * Set the value of name
      *
      * @return  self

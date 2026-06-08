@@ -48,6 +48,7 @@ if(count($argv) > 1){
     check_author_string_characters($downloads_dir);
     check_name_string_characters($downloads_dir);
     check_mixed_rank_children($downloads_dir);
+    check_multiple_hybrid_flags($downloads_dir);
 }
 
 
@@ -371,6 +372,59 @@ function check_author_string_characters($downloads_dir){
 
 }
 
+function check_multiple_hybrid_flags($downloads_dir){
+
+    $sql = "WITH RECURSIVE parentage AS(
+                SELECT 
+                    n.id as name_id,
+                    n.prescribed_id,
+                    n.name_alpha,
+                    n.`rank`,
+                    t.parent_id as parent_id,
+                    t.is_hybrid, n.id as 'child_hybrid_id',
+                    n.prescribed_id as 'child_prescribed_id',
+                    n.name_alpha as 'child_hybrid_name_alpha',
+                    n.`rank` as 'child_hybrid_rank'
+                FROM `names` as n 
+                JOIN taxon_names as tn on tn.name_id = n.id
+                JOIN taxa as t on t.taxon_name_id = tn.id
+                WHERE t.is_hybrid = 1
+            UNION ALL
+                SELECT 
+                    n.id,
+                    n.prescribed_id,
+                    n.name_alpha, 
+                    n.`rank`,
+                    t.parent_id as parent_id,
+                    t.is_hybrid,
+                    p.child_hybrid_id as 'child_hybrid_id',
+                    p.child_prescribed_id as 'child_prescribed_id',
+                    p.child_hybrid_name_alpha as 'child_hybrid_name_alpha',
+                    p.child_hybrid_rank as 'child_hybrid_rank'
+                FROM `names` as n 
+                JOIN taxon_names as tn on tn.name_id = n.id
+                JOIN taxa as t on t.taxon_name_id = tn.id
+                JOIN parentage as p on p.parent_id = t.id
+                WHERE t.parent_id is not null AND t.parent_id != t.id
+                )
+
+        SELECT p.name_id, i.`value` as wfo_id, p.name_alpha, p.`rank`, child_i.`value` as child_wfo, p.child_hybrid_name_alpha, p.child_hybrid_rank
+        FROM parentage as p 
+        JOIN identifiers as i on p.prescribed_id = i.id and i.kind = 'wfo'
+        JOIN identifiers as child_i on p.prescribed_id = child_i.id and child_i.kind = 'wfo'
+        WHERE 
+        p.child_hybrid_id != p.name_id and is_hybrid = 1
+        order by p.name_alpha;";
+
+    run_sql_check(
+        "check_multiple_hybrid_flags", // $name,
+        "There should only be a single hybrid flag in the ancestry of a name and therefore in its polynomial.", //$title,
+        "No lineages were found with multiple hybrid flags.", // $success,
+        "Names were found with multiple hybrid flags.", // $failure,
+        $sql,
+        $downloads_dir);
+
+}
 
 function check_name_string_characters($downloads_dir){
 

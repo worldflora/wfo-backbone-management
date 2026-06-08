@@ -315,7 +315,7 @@ function process_name($name, $version_name){
         foreach ($editors as $editor) {
             if($editor->getOrcidId()){
                 // real person
-                $out['editors_name_ss'][] = $editor->getName();
+                $out['editors_name_ss'][] = $editor->getNameCanonical();
                 $out['editors_orcid_ss'][] = $editor->getOrcidId();
             }
         }
