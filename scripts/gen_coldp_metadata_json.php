@@ -44,7 +44,7 @@ function generate_metadata($file_path, $pub_date, $version){
     $json = json_decode($json_string);
 
     // get the editors in Rhakhis
-    $sql = "SELECT u.`name` as user_name, u.orcid_id as orcid, n.name_alpha as taxon_name  
+    $sql = "SELECT u.`name_canonical` as user_name, u.orcid_id as orcid, n.name_alpha as taxon_name  
     FROM users_taxa as ut
     join taxa as t on ut.taxon_id = t.id
     join users as u on u.id = ut.user_id
@@ -58,6 +58,8 @@ function generate_metadata($file_path, $pub_date, $version){
         if(isset($users[$row['orcid']])){
             $users[$row['orcid']]['taxa'][] = $row['taxon_name'];
         }else{
+
+            /*
 
             $parts = explode(' ', trim($row['user_name']));
             $family = mb_ucfirst(mb_strtolower(array_pop($parts)));
@@ -73,11 +75,15 @@ function generate_metadata($file_path, $pub_date, $version){
             $given = str_replace('. ', '.', $given); // remove space between initials we just added
             //$given =  mb_ucfirst(mb_strtolower(implode(' ', $parts)));
 
+            */
+
+            list($family, $given) = explode(',',trim($row['user_name']), 2);
+
             $users[$row['orcid']] = array(
-                'sort_name' => $family . ' ' . $given,
+                'sort_name' => $row['user_name'],
                 'orcid' => $row['orcid'],
-                'given' => $given,
-                'family' => $family,
+                'given' => trim($given),
+                'family' => trim($family),
                 'taxa' => array($row['taxon_name'])
             );
         }

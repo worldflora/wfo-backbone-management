@@ -411,7 +411,7 @@ function check_multiple_hybrid_flags($downloads_dir){
         SELECT p.name_id, i.`value` as wfo_id, p.name_alpha, p.`rank`, child_i.`value` as child_wfo, p.child_hybrid_name_alpha, p.child_hybrid_rank
         FROM parentage as p 
         JOIN identifiers as i on p.prescribed_id = i.id and i.kind = 'wfo'
-        JOIN identifiers as child_i on p.prescribed_id = child_i.id and child_i.kind = 'wfo'
+        JOIN identifiers as child_i on p.child_prescribed_id = child_i.id and child_i.kind = 'wfo'
         WHERE 
         p.child_hybrid_id != p.name_id and is_hybrid = 1
         order by p.name_alpha;";

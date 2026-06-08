@@ -38,6 +38,12 @@ $users = User::getPossibleEditors();
 $contributors = array();
 foreach($users as $user){
     if($user->isEditor() && $user->getOrcidId() && $user->getTaxaCurated()){
+
+        /*
+
+        Now using canonical names stored in user table.
+        This block can go if it is working successfully after June 2026
+
         $meta = array();
        // $meta['type'] = "DataCurator";
         $meta['orcid'] = $user->getOrcidId();
@@ -58,6 +64,11 @@ foreach($users as $user){
         $given = preg_replace('/ De La$/', ' de la', $given);
         
         $meta['name'] =   "$family, $given";
+        
+        */
+        $meta = array();
+        $meta['orcid'] = $user->getOrcidId();
+        $meta['name'] =   $user->getNameCanonical();
         $contributors[$meta['name']] = $meta;
     }
 }
