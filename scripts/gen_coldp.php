@@ -78,6 +78,7 @@ $taxa_file_path = $downloads_dir . "taxon.tsv";
 $taxa_out = fopen($taxa_file_path, 'w'); 
 $taxon_fields = array(
     "ID",
+    "alternativeID",
     "nameID",
     "parentID",
     "accordingToID",
@@ -256,8 +257,6 @@ while(true){
             $ancestors = $taxon->getAncestors();
             array_unshift($ancestors,$taxon); // add self
 
-
-
                 // accordingToID - same for accepted and synonym
 
                 // "A reference ID to the publication that established the taxonomic concept used by this taxon. 
@@ -337,7 +336,8 @@ while(true){
             if($taxon->getAcceptedName()->getId() == $name->getId()){
 
                 // we are an accepted name - 
-                $taxon_row['ID'] = $name->getPrescribedWfoId() . $qualifier;
+                $taxon_row['ID'] = $name->getPrescribedWfoId();
+                $taxon_row['alternativeID'] = $name->getPrescribedWfoId() . $qualifier;
                 $taxon_row['nameID'] =  $name->getPrescribedWfoId();
 
                 // we update the name to the taxon name - because it will contain the hybrid symbol etc - yuck!
@@ -411,7 +411,7 @@ while(true){
                 // we are a synonym
                 $synonym_row['ID'] = $name->getPrescribedWfoId() . $qualifier;
                 $synonym_row['nameID'] =  $name->getPrescribedWfoId();
-                $synonym_row['taxonID'] = $taxon->getAcceptedName()->getPrescribedWfoId() . $qualifier;
+                $synonym_row['taxonID'] = $taxon->getAcceptedName()->getPrescribedWfoId();
                 $synonym_row['link'] = 'http://list.worldfloraonline.org/' . $name->getPrescribedWfoId() . $qualifier;
                 
                 // add the refs from above
