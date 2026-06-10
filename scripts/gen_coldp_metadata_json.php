@@ -25,7 +25,7 @@ if($argv[0] == "gen_coldp_metadata_json.php"){
     $pub_date = $argv[1];
     $version = substr($pub_date, 0, 7);
 
-    generate_metadata("../data/coldp_metadata.json", $pub_date, $version);
+    generate_metadata("../www/downloads/coldp/coldp_metadata.json", $pub_date, $version);
 }
 
 function generate_metadata($file_path, $pub_date, $version){

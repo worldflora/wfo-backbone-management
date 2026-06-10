@@ -680,9 +680,6 @@ fclose($types_out);
 require_once('gen_coldp_metadata_json.php');
 generate_metadata($downloads_dir . "metadata.json", $pub_date, $version);
 
-// require_once('gen_coldp_metadata_yaml.php');
-// generate_metadata($downloads_dir . "metadata.yaml", $pub_date, $version);
-
 echo "\nZipping Up\n";
 
 // wrap them in a zip file
@@ -698,7 +695,6 @@ $zip->addFile($downloads_dir . 'reference.tsv', "reference.tsv");
 $zip->addFile($downloads_dir . 'synonym.tsv', "synonym.tsv");
 $zip->addFile($downloads_dir . 'taxon.tsv', "taxon.tsv");
 $zip->addFile($downloads_dir . 'typematerial.tsv', "typematerial.tsv");
-if(file_exists($downloads_dir . 'metadata.yaml')) $zip->addFile($downloads_dir . 'metadata.yaml', "metadata.yaml");
 if(file_exists($downloads_dir . 'metadata.json')) $zip->addFile($downloads_dir . 'metadata.json', "metadata.json");
 
 if ($zip->close()!==TRUE) {
@@ -713,7 +709,6 @@ unlink($downloads_dir . 'reference.tsv');
 unlink($downloads_dir . 'synonym.tsv');
 unlink($downloads_dir . 'taxon.tsv');
 unlink($downloads_dir . 'typematerial.tsv');
-@unlink($downloads_dir . 'metadata.yaml');
 @unlink($downloads_dir . 'metadata.json');
 
 
