@@ -347,7 +347,7 @@ while(true){
                 $taxon_row['link'] = 'https://list.worldfloraonline.org/' .$name->getPrescribedWfoId() . $qualifier;
 
                // parentage
-               if($taxon->getParent()) $taxon_row['parentID'] = $taxon->getParent()->getAcceptedName()->getPrescribedWfoId() . $qualifier;
+               if($taxon->getParent()) $taxon_row['parentID'] = $taxon->getParent()->getAcceptedName()->getPrescribedWfoId();
                else $taxon_row['parentID'] = null;
 
                 // add the refs we collected above
