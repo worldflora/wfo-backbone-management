@@ -337,7 +337,7 @@ while(true){
 
                 // we are an accepted name - 
                 $taxon_row['ID'] = $name->getPrescribedWfoId();
-                $taxon_row['alternativeID'] = $name->getPrescribedWfoId() . $qualifier;
+                $taxon_row['alternativeID'] = 'wfo:' . $name->getPrescribedWfoId() . $qualifier;
                 $taxon_row['nameID'] =  $name->getPrescribedWfoId();
 
                 // we update the name to the taxon name - because it will contain the hybrid symbol etc - yuck!
