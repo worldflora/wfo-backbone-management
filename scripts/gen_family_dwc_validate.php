@@ -11,7 +11,13 @@
         echo "\nChecking Links in all files in www/downloads/dwc/";
         $zips = glob('../www/downloads/dwc/*.zip');
         foreach ($zips as $zip_path) {
-           check_file($zip_path);
+           // must end with a wfo id or we get other zip files 
+           if(preg_match('/wfo-[0-9]{10}\.zip$/', $zip_path)){
+                check_file($zip_path);
+           }else{
+                echo "\nSkipping: $zip_path";
+           } 
+           
         }
 
     }else{

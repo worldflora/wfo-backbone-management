@@ -8,7 +8,7 @@
     // php -d memory_limit=3G gen_plant_list.php
 
     import the output into solr
-    curl -H 'Content-type:application/json' 'http://localhost:8983/solr/wfo-api/update?commit=true' -X POST -T plant_list_2025-12.json --user wfo:****
+    curl -H 'Content-type:application/json' 'http://localhost:8983/solr/wfo-api/update?commit=true' -X POST -T plant_list_2026-06.json --user wfo:****
 
     clear down solr
     curl -X POST -H 'Content-Type: application/json' 'http://localhost:8983/solr/wfo-api/update' --data-binary '{"delete":{"query":"classification_id_s:2026-06"} }' --user wfo:****

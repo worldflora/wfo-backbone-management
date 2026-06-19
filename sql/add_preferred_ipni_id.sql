@@ -26,4 +26,5 @@ UPDATE `names` as n
 JOIN single_ids as si ON si.name_id = n.id
 JOIN identifiers as i ON n.id = i.name_id AND i.kind = 'ipni'
 SET n.preferred_ipni_id = i.id
-WHERE n.id > 0;
+WHERE n.preferred_ipni_id is NULL
+AND n.id > 0;
