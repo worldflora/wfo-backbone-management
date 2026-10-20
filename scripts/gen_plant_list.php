@@ -103,7 +103,7 @@ while(true){
             $solr_doc["classification_month_i"] = $version_month;
             $solr_doc["full_name_string_alpha_s"] = $row['name_alpha']; // name object doesn't know about this
             $solr_doc["full_name_string_alpha_t_sort"] = $row['name_alpha'];
-            $solr_doc['solr_import_dt'] = date('Y-m-d\Th:i:s\Z');
+            $solr_doc['solr_import_dt'] = date('Y-m-d\TH:i:s\Z');
 
             if($counter > 0) fwrite($out, ",\n");
             fwrite($out, json_encode($solr_doc));
