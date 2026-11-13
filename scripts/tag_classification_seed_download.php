@@ -122,8 +122,8 @@ function runCurlRequest($curl){
     }
     
     // we close it down after it has been run
-    curl_close($curl);
-    
+    // curl_close($curl); deprecated since 8.5, as it has no effect since PHP 8.0
+     
     return (object)$out;
     
 }

@@ -364,34 +364,34 @@ class NameMatcher{
 
             // we are below species level
             case '3':
-                $out['genus'] = levenshtein($row['genus'], $this->name_parts[0]);
-                $out['species'] = levenshtein($row['species'], $this->name_parts[1]);
-                $out['name'] = levenshtein($row['name'], $this->name_parts[2]);
-                $out['authors'] = levenshtein($row['authors'], $this->authors);
+                $out['genus'] = levenshtein($row['genus'] ?? '', $this->name_parts[0]);
+                $out['species'] = levenshtein($row['species'] ?? '', $this->name_parts[1]);
+                $out['name'] = levenshtein($row['name'] ?? '', $this->name_parts[2]);
+                $out['authors'] = levenshtein($row['authors'] ?? '', $this->authors);
                 break;
             
             // we are below genus level
             case '2':
-                $out['genus'] = levenshtein($row['genus'], $this->name_parts[0]);
-                $out['name'] = levenshtein($row['name'], $this->name_parts[1]);
-                $out['species'] = levenshtein($row['species'], "");
-                $out['authors'] = levenshtein($row['authors'], $this->authors);
+                $out['genus'] = levenshtein($row['genus'] ?? '', $this->name_parts[0]);
+                $out['name'] = levenshtein($row['name'] ?? '', $this->name_parts[1]);
+                $out['species'] = levenshtein($row['species'] ?? '', "");
+                $out['authors'] = levenshtein($row['authors'] ?? '', $this->authors);
                 break;
             
             // we are a monomial genus level
             case '1':
-                $out['name'] = levenshtein($row['name'], $this->name_parts[0]);
-                $out['genus'] = levenshtein($row['genus'], "");
-                $out['species'] = levenshtein($row['species'], "");
-                $out['authors'] = levenshtein($row['authors'], $this->authors);
+                $out['name'] = levenshtein($row['name'] ?? '', $this->name_parts[0]);
+                $out['genus'] = levenshtein($row['genus'] ?? '', "");
+                $out['species'] = levenshtein($row['species'] ?? '', "");
+                $out['authors'] = levenshtein($row['authors'] ?? '', $this->authors);
                 break;
 
             // desperation just look for author string!
             default:
-                $out['name'] = levenshtein($row['name'], "");
-                $out['genus'] = levenshtein($row['genus'], "");
-                $out['species'] = levenshtein($row['species'], "");
-                $out['authors'] = levenshtein($row['authors'], $this->authors);
+                $out['name'] = levenshtein($row['name'] ?? '', "");
+                $out['genus'] = levenshtein($row['genus'] ?? '', "");
+                $out['species'] = levenshtein($row['species'] ?? '', "");
+                $out['authors'] = levenshtein($row['authors'] ?? '', $this->authors);
                 break;
         }
 

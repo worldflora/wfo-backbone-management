@@ -80,6 +80,13 @@ class TaxonGqlType extends ObjectType
                             return $taxon->canEdit();
                         }
                     ],
+                    'taxaWithCurators' =>[
+                        'type' => Type::listOf(TypeRegister::taxonType()),
+                        'description' => "Curators need to know who they've given rights to. This just returns a list of the taxa (including the current one) that have curators assigned to them.",
+                        'resolve' => function($taxon){
+                            return $taxon->getTaxaWithCurators();
+                        }
+                    ],  
                     'synonyms' => [
                         'type' => Type::listOf(TypeRegister::nameType()),
                         'description' => "The names that are considered synonyms of this taxon.",

@@ -23,7 +23,7 @@ class Reference{
     private ?string $modified = null;
 
     /**
-     * Don't call this directly. Use the getRank factory method
+     * Don't call this directly. Use the getReference factory method
      * 
      */
     public function __construct($init_value){

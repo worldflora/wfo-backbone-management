@@ -25,7 +25,7 @@ curl_setopt($curl, CURLOPT_POST, true); // post creates
 curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);   
 curl_setopt($curl, CURLOPT_POSTFIELDS, "{}");
 $response = curl_exec($curl);
-curl_close($curl);
+// curl_close($curl); deprecated since 8.5, as it has no effect since PHP 8.0
 
 $response = json_decode($response, true);
 
@@ -37,7 +37,7 @@ curl_setopt($curl, CURLOPT_HTTPHEADER, array('Accept: application/json', 'Conten
 curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
 curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 $response = curl_exec($curl);
-curl_close($curl);
+// curl_close($curl); deprecated since 8.5, as it has no effect since PHP 8.0
 $version = json_decode($response, true);
 
 //print_r($version);
@@ -86,7 +86,7 @@ foreach($files_to_upload as $filename){
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
     $response = curl_exec ($curl);
     fclose($in);
-    curl_close($curl);
+    // curl_close($curl); deprecated since 8.5, as it has no effect since PHP 8.0
 
     //print_r($response);
 
@@ -105,7 +105,7 @@ curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PUT");
 curl_setopt($curl, CURLOPT_POSTFIELDS, $post_json);
 curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);   
 $response = curl_exec($curl);
-curl_close($curl);
+// curl_close($curl); deprecated since 8.5, as it has no effect since PHP 8.0
 
 //print_r(json_decode($response));
 
@@ -121,6 +121,6 @@ function delete_file($zenodo_access_uri, $zenodo_access_token, $deposit_id, $fil
     curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "DELETE");
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);   
     $response = curl_exec($curl);
-    curl_close($curl);
+    // curl_close($curl); deprecated since 8.5, as it has no effect since PHP 8.0
 
 }

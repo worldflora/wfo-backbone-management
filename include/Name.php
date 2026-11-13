@@ -177,14 +177,14 @@ class Name extends WfoDbObject{
     */
 
     public function setRank($rank){
-        $this->rank = strtolower(trim($rank));
+        $this->rank = strtolower(trim($rank ?? ''));
     }
     public function getRank(){
         return $this->rank;
     }
 
     public function setNameString($name){
-        if($name) $this->name = Name::sanitizeNameString(trim($name));
+        if($name) $this->name = Name::sanitizeNameString(trim($name ?? ''));
         else $this->name = null;
     }
     public function getNameString(){
@@ -192,7 +192,7 @@ class Name extends WfoDbObject{
     }
 
     public function setGenusString($genus){
-        if($genus) $this->genus = ucfirst(mb_strtolower( Name::sanitizeNameString(trim($genus))) );
+        if($genus) $this->genus = ucfirst(mb_strtolower( Name::sanitizeNameString(trim($genus ?? ''))) );
         else $this->genus = null;
     }
     public function getGenusString(){
@@ -200,7 +200,7 @@ class Name extends WfoDbObject{
     }
 
     public function setSpeciesString($species){
-        if(($species)) $this->species = mb_strtolower( Name::sanitizeNameString(trim($species)));
+        if(($species)) $this->species = mb_strtolower( Name::sanitizeNameString(trim($species ?? '')));
         else $this->species = null;
     }
     public function getSpeciesString(){
@@ -208,7 +208,7 @@ class Name extends WfoDbObject{
     }
 
     public function setAuthorsString($authors){
-        if($authors) $this->authors = trim($authors);
+        if($authors) $this->authors = trim($authors ?? '');
         else $this->authors = null;
     }
     public function getAuthorsString(){
@@ -216,7 +216,7 @@ class Name extends WfoDbObject{
     }
 
     public function setStatus($status){
-        if($status) $this->status = mb_strtolower(trim($status));
+        if($status) $this->status = mb_strtolower(trim($status ?? ''));
         else $this->status = null;
     }
     public function getStatus(){
@@ -599,7 +599,7 @@ class Name extends WfoDbObject{
      * 
      */
     public function setPrescribedWfoId($wfo_id){
-        $id = trim($wfo_id);
+        $id = trim($wfo_id ?? '');
         $this->prescribed_wfo_id = $id; 
     }
 
@@ -1040,9 +1040,10 @@ class Name extends WfoDbObject{
 
      }
 
-     public function getHomonyms(){
+     public function getHomonyms($restrict_to_rank = true){
 
         global $mysqli;
+        global $ranks_table;
 
         $homonyms = array();
 
@@ -1065,9 +1066,33 @@ class Name extends WfoDbObject{
             $sql .=  " AND (length(`species`) = 0 || `species` IS NULL)";
         }
 
-        // 2023-11-27 - restrict to same rank
-        $sql .=  " AND `rank` = '{$this->getRank()}'";
- 
+        // 2026-11-03 added switch to rank restriction
+        if($restrict_to_rank){
+
+
+            // 2023-11-27 - restrict to same rank - simple
+            // 2026-11-03 - more complex ranks at levels
+
+            // species and below vs above species
+            // form the two scopes for basionym relationships
+            $ranks_above_species = array();
+            $ranks_species_and_below = array();
+            $species_and_below = false;
+            foreach ($ranks_table as $rank_name => $rank) {
+                if($rank_name == 'species') $species_and_below = true;
+                if($species_and_below){
+                    $ranks_species_and_below[] = $rank_name;
+                }else{
+                    $ranks_above_species[] = $rank_name;
+                }
+            }
+
+            $acceptable_ranks = in_array($this->getRank(), $ranks_species_and_below) ? $ranks_species_and_below : $ranks_above_species;
+            $acceptable_ranks_string =  '"' . implode('", "', $acceptable_ranks ) . '"';
+
+            $sql .=  " AND `rank` IN ({$acceptable_ranks_string})";       
+        }
+
         $result = $mysqli->query($sql);
         while($row = $result->fetch_assoc()){
             $homonyms[] = Name::getName($row['id']);
@@ -1158,6 +1183,7 @@ class Name extends WfoDbObject{
     public static function createName($proposed_name, $create, $force_homonym, $known_homonyms = array()){
 
         global $mysqli;
+        global $ranks_table;
 
         $updateResponse = new UpdateResponse("NewName", true, "Starting check");
 
@@ -1178,25 +1204,60 @@ class Name extends WfoDbObject{
         $proposed_name = Name::sanitizeNameString($proposed_name);
 
         // let's start by parsing out the name into parts.
-        $parts = explode(' ', trim($proposed_name));
+        $dirty_parts = explode(' ', trim($proposed_name ?? ''));
+
+        // are any of the parts actually ranks?
+        $rank_discovered = null;
+        $parts = array();
+        for ($i=0; $i < count($dirty_parts) ; $i++) { 
+            $part = $dirty_parts[$i];
+            $is_rank_word = false;
+            foreach ($ranks_table as $rank_name => $rank) {
+                if(
+                    $part == $rank_name
+                    ||
+                    $part == $rank['abbreviation']
+                    ||
+                    $part == $rank['plural']
+                    ||
+                    in_array($part, $rank['aka']) 
+                ){
+                    $rank_discovered = $rank_name;
+                    $is_rank_word = true;
+                }
+            }
+            if(!$is_rank_word) $parts[] = $part;
+        }
+        
         switch (count($parts)) {
 
             case 1:
                 $name->setNameString($parts[0]);
-                $name->setRank('genus');
+                $name->setRank($rank_discovered ? $rank_discovered : 'genus');
                 break;
             
+            // it is a two part name so either 
             case 2:
-                $name->setNameString($parts[1]);
                 $name->setGenusString($parts[0]);
-                $name->setRank('species');
-                break;
+                $name->setNameString($parts[1]);
+                if($rank_discovered){
+                    $name->setRank($rank_discovered);
+                }else{
+                    if(ctype_upper(substr($parts[1], 0,1))){
+                        // two part name with uppercase second word so default to subgenus - maybe other
+                        $name->setRank('subgenus');
+                    }else{
+                        // two part name with lower case second word so default to species
+                        $name->setRank('species');
+                    }
+                }
+                break; 
 
             case 3:
                 $name->setNameString($parts[2]);
                 $name->setSpeciesString($parts[1]);
                 $name->setGenusString($parts[0]);
-                $name->setRank('subspecies');
+                $name->setRank($rank_discovered ? $rank_discovered : 'subspecies'); // default to subspecies if no rank detected
                 break;
             
             default:
@@ -1207,7 +1268,9 @@ class Name extends WfoDbObject{
         
         }
 
-        $homonymList = $name->getHomonyms();
+        // if we can get the rank from the string then we restrict the search for 
+        // homonyms to that rank but otherwise will return anything looking similar
+        $homonymList = $name->getHomonyms($rank_discovered ? true : false); 
 
         // report that list
         $homoResponse = new UpdateResponse("HomonymsFound", true, "These are the homonyms found for this name.");
@@ -1301,7 +1364,7 @@ class Name extends WfoDbObject{
             $role = $role ? 'taxonomic' : 'nomenclatural';
         }
 
-        // we do things as the current user no the user of this object
+        // we do things as the current user not the user of this object
         $user = unserialize($_SESSION['user']);
 
         if(!$this->canEdit()){

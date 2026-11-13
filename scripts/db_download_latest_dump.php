@@ -67,7 +67,7 @@ curl_setopt($curl, CURLOPT_FILE, $out); // write it to the file
 
 // trigger the download
 $result = curl_exec($curl);
-curl_close($curl);
+// curl_close($curl); deprecated since 8.5, as it has no effect since PHP 8.0
 fclose($out);
 
 // double check we got it - and set flag to stop import if we can't uncompress it

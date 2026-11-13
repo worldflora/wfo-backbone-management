@@ -27,7 +27,7 @@ curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
 curl_setopt($curl, CURLOPT_POSTFIELDS, $post_json);
 curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 $response = curl_exec($curl);
-curl_close($curl);
+// curl_close($curl); deprecated since 8.5, as it has no effect since PHP 8.0
 
 print_r(json_decode($response));
 
@@ -61,7 +61,7 @@ curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
 curl_setopt($curl, CURLOPT_POSTFIELDS, $post_json);
 curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 $response = curl_exec($curl);
-curl_close($curl);
+// curl_close($curl); deprecated since 8.5, as it has no effect since PHP 8.0
 
 print_r(json_decode($response));
 

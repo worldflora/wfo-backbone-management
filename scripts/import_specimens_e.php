@@ -47,7 +47,7 @@ while($line = fgetcsv($in, escape: "\\")){
     curl_setopt($ch, CURLOPT_NOBODY, true);
     curl_exec($ch);
     $responseCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
+    // curl_close($ch); deprecated since 8.5, as it has no effect since PHP 8.0
 
     // Check the response code
     if($responseCode != 200){

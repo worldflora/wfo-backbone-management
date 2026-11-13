@@ -32,13 +32,34 @@ class BasionymFinder{
         $this->filter = preg_replace('/[^A-Za-z- ]/', '', $filter);
 
         // possible ranks - all names must be species level or below
+
+
+        // this should probably be done centrally somewhere.
+        // 2026-11-04 - changing to ranks in bands above and below species
+        $ranks_above_species = array();
+        $ranks_species_and_below = array();
+        $species_and_below = false;
+        foreach ($ranks_table as $rank_name => $rank) {
+            if($rank_name == 'species') $species_and_below = true;
+            if($species_and_below){
+                $ranks_species_and_below[] = $rank_name;
+            }else{
+                $ranks_above_species[] = $rank_name;
+            }
+        }
+
+        if(in_array($this->name->getRank(),$ranks_species_and_below)) $restrict_to_ranks = $ranks_species_and_below;
+        else  $restrict_to_ranks = $ranks_above_species;
+
+        /*
         $hit_level = false;
         $ranks = array();
         foreach ($ranks_table as $rank => $values) {
             if($rank == 'species') $hit_level = true;
             if($hit_level) $ranks[] = $rank;
         }
-        $this->possibleRanks = "'" . implode("', '", $ranks) . "'";
+        */
+        $this->possibleRanks = "'" . implode("', '", $restrict_to_ranks) . "'";
 
         if($filter){
             $this->alphabeticSearch();
@@ -59,6 +80,9 @@ class BasionymFinder{
             $sql .= " AND (`year` <= {$this->name->getYear()} OR `year` is null) ";
         }
 
+        // we should never return ourselves
+        $sql .= " AND id != {$this->name->getId()} ";
+        
         $sql .= " ORDER BY `name_alpha` LIMIT {$this->limit}";
         
         $result = $mysqli->query($sql);
@@ -108,6 +132,8 @@ class BasionymFinder{
         while($row = $result->fetch_assoc()){
             $this->possibleBasionyms[] = Name::getName($row['id']);
         }
+
+//        echo $sql;
 
     }
 

@@ -284,7 +284,7 @@ There are three rules that govern where a name can be placed in the taxonomy
             
             if( $this->name->getSpeciesString() ){
                 // we are below species level so the genus and species need to match
-                $sql .= " AND `genus` = '{$this->name->getGenusString()}' AND `name` = '{$this->name->getSpeciesString()}' ";
+                $sql .= " AND `genus` = '{$this->name->getGenusString()}' AND (`species` = '{$this->name->getSpeciesString()}' || `name` = '{$this->name->getSpeciesString()}') ";
             }else{
 
                 // we have a genus string (are below genus) but no species string (so a species or above species level)
@@ -310,6 +310,8 @@ There are three rules that govern where a name can be placed in the taxonomy
 
         // order and limit
         $sql .= " ORDER BY n.name_alpha LIMIT 30";
+
+        //echo $sql;
 
         // run the query
         $response = $mysqli->query($sql);

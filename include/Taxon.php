@@ -337,12 +337,16 @@ class Taxon extends WfoDbObject{
         // if we are a child of a subspecific name (e.g. a var of a subsp)
         $ancestor = $this;
         $species_level = array_search('species', array_keys($ranks_table));
-        $additions = '';
+
+        // we need to build a list or additions going up to species
+        $ancestors = array();
         while($ancestor = $ancestor->getParent()){
 
             // if the ancestor is below species then we need 
             // to add it to the name
             if(array_search($ancestor->getRank(), array_keys($ranks_table)) > $species_level){
+
+                $ancestor_name = '';
 
                 // rank - abbreviated if need be
                 if($abbreviate_rank){
@@ -350,7 +354,7 @@ class Taxon extends WfoDbObject{
                 }else{
                     $rank = ucfirst($ancestor->getAcceptedName()->getRank());
                 }
-                $additions .= " <span class=\"wfo-name-rank\">$rank</span>";
+                $ancestor_name .= " <span class=\"wfo-name-rank\">$rank</span>";
 
                 // the ancestor might be a hybrid
                 if($ancestor->getHybridStatus()) $anc_hybrid_symbol = $hybrid_symbol;
@@ -358,15 +362,25 @@ class Taxon extends WfoDbObject{
                 
                 // name part
                 if($italics){
-                    $additions .= " <i>$anc_hybrid_symbol{$ancestor->getAcceptedName()->getNameString()}</i>";
+                    $ancestor_name .= " <i>$anc_hybrid_symbol{$ancestor->getAcceptedName()->getNameString()}</i>";
                 }else{
-                    $additions .= " $anc_hybrid_symbol{$ancestor->getAcceptedName()->getNameString()}";
+                    $ancestor_name .= " $anc_hybrid_symbol{$ancestor->getAcceptedName()->getNameString()}";
                 }
+
+                $ancestors[] = $ancestor_name;
+
             }else{
                 break;
             }
         }
-        $fns = str_replace('<span class="wfo-name-rank">', $additions  . ' <span class="wfo-name-rank">', $fns);
+
+        $ancestors = array_reverse($ancestors);
+
+        $additions = implode(' ', $ancestors);
+
+       //error_log($additions);
+
+        $fns = str_replace('<span class="wfo-name-rank">',  $additions . ' <span class="wfo-name-rank">', $fns);
 
         // we sometimes end up with double spaces = bad
         $fns = preg_replace('/  /', ' ', $fns);
@@ -1717,6 +1731,43 @@ class Taxon extends WfoDbObject{
         }
         return $out;
 
+    }
+
+
+    /**
+     * How do we know all the people who can
+     * edit stuff downstream of this taxon?
+     * 
+     * Curators need to know who they've given rights to.
+     * This just returns a list of the taxa (including the current one)
+     * that have curators assigned.
+     * 
+     */
+    public function getTaxaWithCurators(){
+
+        global $mysqli;
+
+        $sql = "with RECURSIVE the_taxa AS(
+                # seed the recursion
+                SELECT id, parent_id, cast(id as char(1000)) as `path` from taxa where id = {$this->getId()} 
+                UNION ALL
+                SELECT t.id, t.parent_id, concat_ws(',', tt.`path`, t.id) as `path`
+                from taxa as t
+                join the_taxa as tt on t.parent_id = tt.id
+            )
+
+            SELECT 
+                distinct(t.id)
+            FROM the_taxa as t
+            JOIN users_taxa as ut on ut.taxon_id = t.id
+        ";
+
+        $result = $mysqli->query($sql);
+        $out = array();
+        while($row = $result->fetch_assoc()){
+            $out[] = Taxon::getById($row['id']);
+        }
+        return $out;
 
     }
 
