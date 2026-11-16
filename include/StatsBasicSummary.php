@@ -23,8 +23,9 @@ class StatsBasicSummary{
     public ?int $species;
     public ?int $subspecies;
     public ?int $varieties;
+    public ?int $gbifGapSpecies;
+    public ?int $gbifGapOccurrences;
     
-
     private function __construct($row){   
         $this->id = $row['id'];
         $this->phylum = $row['phylum'];

@@ -6,7 +6,7 @@ require_once('../config.php');
     Will create an entry in the previous classifications table for any name
     who's role has changed since the last classification stored in previous classifications.
 
-    In proceedural style this is described as 
+    In procedural style this is described as 
     - for each name record
     - Calculate its current role in the taxonomy and parent (or accepted) placement
     - Look to the most recent previous classification for this name record.
@@ -30,8 +30,6 @@ CREATE TABLE `previous_placements` (
   CONSTRAINT `name_link` FOREIGN KEY (`name_id`) REFERENCES `names` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
   CONSTRAINT `placement_link` FOREIGN KEY (`placed_in`) REFERENCES `names` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=1703913 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-
 
 */
 
@@ -107,12 +105,12 @@ current_placements as (
     LEFT JOIN taxon_names AS tn ON n.id = tn.name_id
     LEFT JOIN taxa AS t ON tn.taxon_id = t.id
     LEFT JOIN taxon_names AS acn ON t.taxon_name_id = acn.id # accepted names for the taxa
-    JOIN `names` as accepted_names on accepted_names.id = acn.name_id
-    JOIN `identifiers` as accepted_identifiers on accepted_identifiers.id = accepted_names.prescribed_id and accepted_identifiers.kind = 'wfo'
+    LEFT JOIN `names` as accepted_names on accepted_names.id = acn.name_id
+    LEFT JOIN `identifiers` as accepted_identifiers on accepted_identifiers.id = accepted_names.prescribed_id and accepted_identifiers.kind = 'wfo'
     LEFT JOIN taxa AS pt ON t.parent_id = pt.id # parent taxon
     LEFT JOIN taxon_names AS ptn ON pt.taxon_name_id = ptn.id
-    JOIN `names` as parent_names on parent_names.id = ptn.name_id
-    JOIN `identifiers` as parent_identifiers on parent_identifiers.id = parent_names.prescribed_id and parent_identifiers.kind = 'wfo'
+    LEFT JOIN `names` as parent_names on parent_names.id = ptn.name_id
+    LEFT JOIN `identifiers` as parent_identifiers on parent_identifiers.id = parent_names.prescribed_id and parent_identifiers.kind = 'wfo'
 ),
 
 #select * from current_placements where name_id = 1716323;

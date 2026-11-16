@@ -21,7 +21,7 @@
 22 * * * * cd /var/wfo-list/rhakhis/api/scripts && php -d memory_limit=1024M  gen_genus_stats.php '2 DAY' > /dev/null 2>&1
 
 # Stats download files are generated every two days
-10 1 */2 * * cd /var/wfo-list/rhakhis/api/scripts && php gen_stats_files.php > /dev/null 2>&1
+10 1 */2 * * cd /var/wfo-list/rhakhis/api/scripts && php -d memory_limit=1024M gen_stats_files.php > /dev/null 2>&1
 
 # we scrape gbif every hour
 15 * * * * cd /var/wfo-list/rhakhis/api/scripts && php gen_gbif_count.php > /dev/null 2>&1

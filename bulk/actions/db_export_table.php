@@ -27,4 +27,7 @@ fclose($out);
 // exec("gzip $csv_file");
 exec("zip -j $zip_file $csv_file");
 
+// remove the original csv_file
+unlink($csv_file);
+
 header("Location: index.php?action=view&phase=csv");
